@@ -53,8 +53,8 @@ export class ScriptRunnerService {
   ): Promise<ScriptResult[]> {
     return new Promise((resolve, reject) => {
       const pythonPath = process.env['PYTHON_PATH'] || 'python3';
-      // In Docker: scripts are at /app/scripts/. Locally: ../scripts/
-      const localPath = path.join(process.cwd(), '..', 'scripts', scriptName);
+      // In Docker and locally: scripts are at /backend/scripts/
+      const localPath = path.join(process.cwd(), 'scripts', scriptName);
       const dockerPath = path.join(process.cwd(), 'scripts', scriptName);
       const scriptPath = fs.existsSync(dockerPath) ? dockerPath : localPath;
 
