@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VaultScan Security Report</title>
+<style>
+  :root {
+    --bg: #0A0A0F;
+    --surface: #12121A;
+    --border: #1E1E2E;
+    --text: #F0F0FF;
+    --muted: #8B8BA7;
+    --primary: #6C47FF;
+    --accent: #00E5FF;
+    --critical: #FF4D6A;
+    --high: #FF8C42;
+    --medium: #FFD166;
+    --low: #06D6A0;
+  }
+
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    font-size: 12px;
+    line-height: 1.6;
+  }
+
+  .page {
+    padding: 40px;
+    page-break-after: always;
+  }
+
+  .page:last-child {
+    page-break-after: avoid;
+  }
+
+  /* Cover Page */
+  .cover {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 90vh;
+    text-align: center;
+  }
+
+  .logo {
+    font-size: 48px;
+    font-weight: 800;
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 16px;
+  }
+
+  .logo-icon {
+    font-size: 64px;
+    margin-bottom: 8px;
+  }
+
+  .cover h1 {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 32px;
+  }
+
+  .cover .meta {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 24px 40px;
+    text-align: left;
+    min-width: 400px;
+  }
+
+  .cover .meta p {
+    margin: 8px 0;
+    color: var(--muted);
+    font-size: 13px;
+  }
+
+  .cover .meta strong {
+    color: var(--text);
+  }
+
+  /* Section Headers */
+  .section-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--primary);
+    margin: 32px 0 16px 0;
+    padding-bottom: 8px;
+    border-bottom: 2px solid var(--border);
+  }
+
+  .section-title:first-child {
+    margin-top: 0;
+  }
+
+  /* Risk Score Card */
+  .risk-score-card {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 24px 32px;
+    margin: 16px 0 24px 0;
+  }
+
+  .risk-score-card .score {
+    font-size: 42px;
+    font-weight: 800;
+    min-width: 120px;
+  }
+
+  .risk-score-card .label {
+    font-size: 16px;
+    font-weight: 600;
+  }
+
+  .risk-score-card .description {
+    color: var(--muted);
+    font-size: 12px;
+    margin-top: 4px;
+  }
+
+  .risk-LOW .score { color: var(--low); }
+  .risk-LOW { border-left: 4px solid var(--low); }
+  .risk-MEDIUM .score { color: var(--medium); }
+  .risk-MEDIUM { border-left: 4px solid var(--medium); }
+  .risk-HIGH .score { color: var(--high); }
+  .risk-HIGH { border-left: 4px solid var(--high); }
+  .risk-CRITICAL .score { color: var(--critical); }
+  .risk-CRITICAL { border-left: 4px solid var(--critical); }
+
+  /* Summary Text */
+  .summary-text {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 20px;
+    color: var(--text);
+    font-size: 13px;
+    line-height: 1.8;
+    margin-bottom: 24px;
+  }
+
+  /* Severity Summary */
+  .severity-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin: 16px 0 24px 0;
+  }
+
+  .severity-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px;
+    text-align: center;
+  }
+
+  .severity-card .count {
+    font-size: 28px;
+    font-weight: 800;
+    margin-bottom: 4px;
+  }
+
+  .severity-card .severity-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--muted);
+  }
+
+  .severity-card.critical .count { color: var(--critical); }
+  .severity-card.critical { border-top: 3px solid var(--critical); }
+  .severity-card.high .count { color: var(--high); }
+  .severity-card.high { border-top: 3px solid var(--high); }
+  .severity-card.medium .count { color: var(--medium); }
+  .severity-card.medium { border-top: 3px solid var(--medium); }
+  .severity-card.low .count { color: var(--low); }
+  .severity-card.low { border-top: 3px solid var(--low); }
+
+  /* Tables */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 16px 0;
+    font-size: 11px;
+  }
+
+  th {
+    background: var(--surface);
+    color: var(--primary);
+    font-weight: 600;
+    text-align: left;
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+    text-transform: uppercase;
+    font-size: 10px;
+    letter-spacing: 0.5px;
+  }
+
+  td {
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+    vertical-align: top;
+    color: var(--text);
+  }
+
+  tr:nth-child(even) td {
+    background: rgba(18, 18, 26, 0.5);
+  }
+
+  /* Severity Badges */
+  .badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .badge-CRITICAL { background: rgba(255,77,106,0.2); color: var(--critical); border: 1px solid var(--critical); }
+  .badge-HIGH { background: rgba(255,140,66,0.2); color: var(--high); border: 1px solid var(--high); }
+  .badge-MEDIUM { background: rgba(255,209,102,0.2); color: var(--medium); border: 1px solid var(--medium); }
+  .badge-LOW { background: rgba(6,214,160,0.2); color: var(--low); border: 1px solid var(--low); }
+
+  /* Recommendations */
+  .recommendation {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px;
+    margin: 8px 0;
+  }
+
+  .recommendation .priority {
+    display: inline-block;
+    background: var(--primary);
+    color: white;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 4px;
+    margin-right: 8px;
+  }
+
+  .recommendation .action {
+    font-weight: 600;
+    color: var(--text);
+    font-size: 13px;
+  }
+
+  .recommendation .rationale {
+    color: var(--muted);
+    font-size: 11px;
+    margin-top: 6px;
+  }
+
+  .recommendation .effort-tag {
+    display: inline-block;
+    font-size: 10px;
+    color: var(--accent);
+    margin-top: 4px;
+  }
+
+  /* Key Findings */
+  .key-finding {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px;
+    margin: 8px 0;
+  }
+
+  .key-finding .title {
+    font-weight: 600;
+    font-size: 13px;
+    color: var(--text);
+    margin-bottom: 6px;
+  }
+
+  .key-finding .detail {
+    color: var(--muted);
+    font-size: 11px;
+    margin: 2px 0;
+  }
+
+  /* Technical Details */
+  .tech-details {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 20px;
+    color: var(--muted);
+    font-size: 12px;
+    line-height: 1.8;
+    white-space: pre-wrap;
+  }
+
+  /* Footer */
+  .footer {
+    margin-top: 40px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    color: var(--muted);
+    font-size: 10px;
+  }
+
+  /* No data message */
+  .no-data {
+    color: var(--muted);
+    font-style: italic;
+    padding: 16px;
+    text-align: center;
+    background: var(--surface);
+    border-radius: 8px;
+    border: 1px solid var(--border);
+  }
+</style>
+</head>
+<body>
+
+<!-- COVER PAGE -->
+<div class="page">
+  <div class="cover">
+    <div class="logo-icon">&#x1F6E1;</div>
+    <div class="logo">VaultScan</div>
+    <h1>Security Assessment Report</h1>
+    <div class="meta">
+      <p><strong>Asset:</strong> {{ASSET_NAME}} ({{ASSET_VALUE}})</p>
+      <p><strong>Asset Type:</strong> {{ASSET_TYPE}}</p>
+      <p><strong>Scan Type:</strong> {{SCAN_TYPE}}</p>
+      <p><strong>Date:</strong> {{GENERATED_AT}}</p>
+      <p><strong>Organization:</strong> {{ORG_NAME}}</p>
+      <p><strong>Scan ID:</strong> {{SCAN_ID}}</p>
+    </div>
+  </div>
+</div>
+
+<!-- RISK SCORE + EXECUTIVE SUMMARY -->
+<div class="page">
+  <h2 class="section-title">Risk Assessment</h2>
+
+  <div class="risk-score-card risk-{{RISK_LEVEL}}">
+    <div>
+      <div class="score">{{RISK_SCORE}}/100</div>
+    </div>
+    <div>
+      <div class="label">Risk Level: {{RISK_LEVEL}}</div>
+      <div class="description">Based on {{TOTAL_FINDINGS}} findings from {{SCAN_TYPE}} scan</div>
+    </div>
+  </div>
+
+  <h2 class="section-title">Executive Summary</h2>
+  <div class="summary-text">{{EXECUTIVE_SUMMARY}}</div>
+
+  <h2 class="section-title">Findings Overview</h2>
+  <div class="severity-grid">
+    <div class="severity-card critical">
+      <div class="count">{{CRITICAL_COUNT}}</div>
+      <div class="severity-label">Critical</div>
+    </div>
+    <div class="severity-card high">
+      <div class="count">{{HIGH_COUNT}}</div>
+      <div class="severity-label">High</div>
+    </div>
+    <div class="severity-card medium">
+      <div class="count">{{MEDIUM_COUNT}}</div>
+      <div class="severity-label">Medium</div>
+    </div>
+    <div class="severity-card low">
+      <div class="count">{{LOW_COUNT}}</div>
+      <div class="severity-label">Low</div>
+    </div>
+  </div>
+
+  <!-- Key Findings -->
+  {{KEY_FINDINGS_SECTION}}
+</div>
+
+<!-- DETAILED FINDINGS -->
+<div class="page">
+  <h2 class="section-title">Detailed Findings</h2>
+  {{FINDINGS_TABLE}}
+</div>
+
+<!-- RECOMMENDATIONS -->
+<div class="page">
+  <h2 class="section-title">Remediation Recommendations</h2>
+  {{RECOMMENDATIONS_SECTION}}
+
+  <h2 class="section-title">Technical Details</h2>
+  <div class="tech-details">{{TECHNICAL_DETAILS}}</div>
+
+  {{COMPLIANCE_SECTION}}
+
+  <div class="footer">
+    <span>Generated by VaultScan</span>
+    <span>{{GENERATED_AT}}</span>
+    <span>Confidential</span>
+  </div>
+</div>
+
+</body>
+</html>
