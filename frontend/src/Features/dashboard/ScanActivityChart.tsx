@@ -21,7 +21,17 @@ const tooltipStyle = {
 export default function ScanActivityChart() {
   const { data: activity, isLoading } = useScanActivity();
 
-  if (isLoading) return <Skeleton className="h-[320px]" />;
+  if (isLoading) {
+    return (
+      <div className="glass-card p-5 flex flex-col gap-5 h-[345px] animate-pulse">
+        <div className="flex items-center gap-2">
+          <div className="size-8 bg-blue-500/10 border border-blue-500/10 rounded" />
+          <div className="h-4 w-28 bg-muted/20 rounded" />
+        </div>
+        <div className="flex-1 w-full bg-muted/10 rounded" />
+      </div>
+    );
+  }
 
   const formatChartDate = (date: string) => {
     return new Date(date).toLocaleDateString("en-US", { month: "short", day: "numeric" });
