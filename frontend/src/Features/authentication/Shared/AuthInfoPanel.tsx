@@ -53,56 +53,57 @@ function AbstractLogo({ variant }: { variant: number }) {
 
 export function AuthInfoPanel() {
   return (
-    <div className="hidden lg:flex lg:w-[380px] relative flex-col justify-between overflow-hidden bg-muted/30 p-8 border border-border shadow-sm animate-fade-in-up">
+    <div className="hidden lg:flex lg:w-1/2 h-screen sticky top-0 flex-col justify-between overflow-hidden bg-muted/30 p-10 lg:p-14 border-r border-border animate-fade-in-up shrink-0">
       {/* Background patterns */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
-        <div className="absolute top-[10%] left-[10%] h-16 w-16 opacity-[0.05]">
+        <div className="absolute top-[10%] left-[10%] h-24 w-24 opacity-[0.05]">
           <Shield className="h-full w-full text-primary" />
         </div>
       </div>
 
       <div className="relative z-10">
-        <div className="flex items-center gap-3 mb-8">
-          <div className="flex h-11 w-11 items-center justify-center bg-primary">
-            <Shield className="h-6 w-6 text-primary-foreground" />
+        <div className="flex items-center gap-4 mb-8">
+          <div className="flex h-12 w-12 items-center justify-center bg-primary">
+            <Shield className="h-7 w-7 text-primary-foreground" />
           </div>
           <div>
-            <h1 className="text-xl font-bold text-foreground tracking-tight">VaultScan</h1>
-            <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-widest mt-0.5">Security Platform</p>
+            <h1 className="text-2xl font-black text-foreground tracking-tighter uppercase leading-none">VaultScan</h1>
+            <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-[0.2em] mt-1 opacity-60">Security Intelligence</p>
           </div>
         </div>
-        <h2 className="text-2xl font-bold text-foreground mb-3 tracking-tight">
-          Secure your digital assets
+        <h2 className="text-4xl font-black text-foreground mb-4 tracking-tighter uppercase leading-[0.9]">
+          Secure your <br/> digital assets.
         </h2>
-        <p className="text-[13px] text-muted-foreground leading-relaxed max-w-[340px]">
+        <p className="text-[14px] text-muted-foreground leading-relaxed max-w-sm font-medium opacity-80">
           Enterprise-grade vulnerability scanning powered by artificial intelligence.
         </p>
       </div>
 
-      <div className="relative z-10 flex flex-col gap-3 my-6">
+      <div className="relative z-10 flex flex-col gap-3 my-6 flex-1 justify-start">
         {features.map((feature, i) => (
           <div
             key={feature.title}
             className={cn(
-              "flex items-start gap-4 p-4 bg-card border border-border transition-all animate-fade-in-up"
+              "flex items-start gap-4 p-5 bg-card border border-border transition-all hover:border-primary/30 group animate-fade-in-up"
             )}
+            style={{ animationDelay: `${i * 0.1}s` }}
           >
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center bg-primary/10">
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center bg-primary/10 group-hover:bg-primary/20 transition-colors">
               <feature.icon className="h-5 w-5 text-primary" />
             </div>
             <div>
-              <h3 className="text-[14px] font-bold text-foreground">{feature.title}</h3>
-              <p className="text-[12px] text-muted-foreground leading-relaxed mt-1.5 font-medium">{feature.description}</p>
+              <h3 className="text-[16px] font-bold text-foreground">{feature.title}</h3>
+              <p className="text-[13px] text-muted-foreground leading-relaxed mt-1.5 font-medium line-clamp-2">{feature.description}</p>
             </div>
           </div>
         ))}
       </div>
 
-      <div className="relative z-10">
-        <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-600 mb-5">
-          Trusted by security teams worldwide
+      <div className="relative z-10 pt-4 border-t border-border/40">
+        <p className="text-[9px] font-bold uppercase tracking-[0.3em] text-muted-foreground/50 mb-4">
+          Advanced Frameworks
         </p>
-        <div className="flex items-center gap-6 text-slate-600 opacity-70">
+        <div className="flex items-center gap-5 text-muted-foreground/30">
           {[0, 1, 2, 3, 4].map((i) => (
             <AbstractLogo key={i} variant={i} />
           ))}
