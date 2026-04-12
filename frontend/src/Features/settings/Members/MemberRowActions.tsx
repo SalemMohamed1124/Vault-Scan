@@ -50,7 +50,7 @@ export default function MemberRowActions({ member }: MemberRowActionsProps) {
         await updateRoleApi({ orgId: activeOrgId!, memberId: member.id, role });
       },
     });
-  };
+  }
 
   function handleRemoveMember() {
     confirm({
@@ -62,7 +62,52 @@ export default function MemberRowActions({ member }: MemberRowActionsProps) {
         await removeMemberApi({ orgId: activeOrgId!, memberId: member.id });
       },
     });
-  };
+  }
+
+  if (isMobile) {
+    return (
+      <div className="grid grid-cols-2 gap-2 w-full">
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="outline" className="w-full text-xs gap-2 h-9">
+              <Settings2 className="size-3.5" />
+              Manage
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-48">
+            <DropdownMenuLabel className="text-[10px] uppercase text-muted-foreground tracking-widest px-2 py-1.5">
+              Assign Role
+            </DropdownMenuLabel>
+            {(["ADMIN", "EDITOR", "VIEWER"] as OrgRole[]).map((role) => {
+              const Icon = ROLE_ICONS[role];
+              const isCurrent = member.role === role;
+              return (
+                <DropdownMenuItem
+                  key={role}
+                  onClick={() => handleUpdateRole(role)}
+                  className={cn(
+                    "flex items-center gap-2 text-xs font-semibold py-2 px-3",
+                    isCurrent && "bg-primary/5 text-primary"
+                  )}
+                >
+                  <Icon className={cn("size-3.5", isCurrent ? "text-primary" : "text-muted-foreground")} />
+                  {role}
+                </DropdownMenuItem>
+              );
+            })}
+          </DropdownMenuContent>
+        </DropdownMenu>
+        <Button 
+          variant="destructive" 
+          onClick={handleRemoveMember} 
+          className="w-full text-xs gap-2 h-9"
+        >
+          <Trash2 className="size-3.5" />
+          Remove
+        </Button>
+      </div>
+    );
+  }
 
   return (
     <div className="flex items-center gap-1.5 shrink-0">
