@@ -70,10 +70,10 @@ export default function ReportRowActions({ report }: ReportRowActionsProps) {
         <Button 
           variant="outline" 
           onClick={() => toClipboard(report.scanId, "Scan ID copied")} 
-          className="w-full text-xs h-9 gap-1.5"
+          className="w-full text-xs h-9 gap-1.5 col-span-2"
         >
           <Copy className="size-3.5" />
-          Scan ID
+          Copy Scan ID
         </Button>
 
       </div>
