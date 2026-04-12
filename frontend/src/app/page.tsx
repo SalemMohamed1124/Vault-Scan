@@ -14,9 +14,11 @@ export default async function HomePage() {
   const authed = !!cookieStore.get("access_token")?.value;
 
   return (
-    <main className="relative min-h-screen bg-background text-foreground selection:bg-primary/20">
-      <LandingBackground />
-      <div className="relative z-10">
+    <main className="relative min-h-screen w-full  text-foreground">
+      <div className="inset-0 z-0 pointer-events-none">
+        <LandingBackground />
+      </div>
+      <div className="relative z-10 w-full">
         <LandingNavbar authed={authed} />
         <LandingHero />
         <LandingFeatures />
