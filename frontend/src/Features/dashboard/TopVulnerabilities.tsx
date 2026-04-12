@@ -9,7 +9,27 @@ import { cn } from "@/lib/utils";
 export default function TopVulnerabilities() {
   const { data: vulns, isLoading } = useTopVulns();
 
-  if (isLoading) return <Skeleton className="h-[400px]" />;
+  if (isLoading) {
+    return (
+      <div className="glass-card p-5 flex flex-col gap-6 h-[420px] animate-pulse">
+        <div className="flex items-center gap-2">
+          <div className="size-8 bg-amber-500/10 border border-amber-500/10 rounded" />
+          <div className="h-4 w-24 bg-muted/20 rounded" />
+        </div>
+        <div className="space-y-6">
+          {[1, 2, 3, 4].map((i) => (
+            <div key={i} className="space-y-2">
+              <div className="flex justify-between">
+                <div className="h-3 w-32 bg-muted/20 rounded" />
+                <div className="h-3 w-8 bg-muted/20 rounded" />
+              </div>
+              <div className="h-2 w-full bg-muted/10 rounded" />
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
 
   const maxCount = Math.max(...(vulns?.map((v) => v.count) || [1]), 1);
 
