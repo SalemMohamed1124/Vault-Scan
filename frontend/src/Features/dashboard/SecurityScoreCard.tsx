@@ -4,75 +4,80 @@ import { useSecurityScore } from "./useDashboardData";
 import { Shield, ArrowUpRight, ArrowDownRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Skeleton } from "@/components/ui/skeleton";
+import { SeverityBadge } from "@/components/layout/SeverityBadge";
 
 export default function SecurityScoreCard() {
   const { data, isLoading } = useSecurityScore();
 
-  if (isLoading) return <Skeleton className="h-[120px]" />;
+  if (isLoading) {
+    return (
+      <div className="glass-card p-5 h-full animate-pulse">
+        <div className="flex flex-col gap-4">
+          <div className="h-3 w-20 bg-muted/20 rounded pl-1" />
+          <div className="flex items-center gap-4">
+            <div className="size-14 rounded-full bg-muted/10" />
+            <div className="space-y-2">
+              <div className="h-6 w-20 bg-muted/20 rounded" />
+              <div className="h-3 w-12 bg-muted/10 rounded" />
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   const s = data || { score: 0, grade: "F", previousScore: 0, trend: "stable" };
   const diff = s.score - s.previousScore;
 
-  const getRingColor = (grade: string) => {
-    switch (grade) {
-      case "A": return "#10b981";
-      case "B": return "#3b82f6";
-      case "C": return "#f59e0b";
-      case "D": return "#f97316";
-      default: return "#ef4444";
-    }
-  };
+  const config = {
+    A: { color: "#10b981", theme: "success" },
+    B: { color: "#3b82f6", theme: "low" },
+    C: { color: "#f59e0b", theme: "medium" },
+    D: { color: "#f97316", theme: "high" },
+  }[s.grade] || { color: "#ef4444", theme: "critical" };
 
-  const getBadgeClass = (grade: string) => {
-    switch (grade) {
-      case "A": return "bg-emerald-500/10 text-emerald-500 border-emerald-500/20";
-      case "B": return "bg-blue-500/10 text-blue-500 border-blue-500/20";
-      case "C": return "bg-amber-500/10 text-amber-500 border-amber-500/20";
-      default: return "bg-red-500/10 text-red-500 border-red-500/20";
-    }
-  };
-
-  const radius = 24;
+  const radius = 28;
   const circumference = 2 * Math.PI * radius;
   const offset = circumference - (s.score / 100) * circumference;
 
   return (
-    <div className="relative glass-card p-4 sm:p-5 gradient-card-green h-full">
-      <div className="flex flex-col sm:flex-row items-start justify-between gap-4">
-        <div className="flex flex-col gap-3 w-full min-w-0">
-          <p className="text-[10px] font-black uppercase text-muted-foreground tracking-widest pl-1 truncate">Security Score</p>
-          <div className="flex items-center gap-3 sm:gap-4 flex-wrap">
-            <div className="relative size-14 flex items-center justify-center -rotate-90 shrink-0">
-               <svg className="size-full">
-                  <circle cx="28" cy="28" r={radius} fill="none" stroke="currentColor" strokeWidth="4" className="text-muted/10" />
-                  <circle 
-                    cx="28" cy="28" r={radius} fill="none" stroke={getRingColor(s.grade)} strokeWidth="4" 
-                    strokeDasharray={circumference} strokeDashoffset={offset}
-                    className="transition-all duration-1000 ease-out"
-                  />
-               </svg>
-               <span className="absolute inset-0 flex items-center justify-center rotate-90 font-black text-lg">{s.score}</span>
-            </div>
-            <div className="flex flex-col gap-1.5 min-w-0">
-               <div className={cn("px-3 py-1 border font-black text-[10px] sm:text-xs text-center whitespace-nowrap", getBadgeClass(s.grade))}>
-                  GRADE {s.grade}
-               </div>
-               <div className={cn(
-                 "flex items-center gap-1 text-[10px] font-bold px-1 whitespace-nowrap",
-                 s.trend === 'up' ? "text-emerald-500" : s.trend === 'down' ? "text-red-500" : "text-muted-foreground"
-               )}>
-                 {s.trend === 'up' ? <ArrowUpRight className="size-3 shrink-0" /> : s.trend === 'down' ? <ArrowDownRight className="size-3 shrink-0" /> : null}
-                 <span className="truncate">{diff > 0 ? `+${diff}` : diff} PTS</span>
-               </div>
-            </div>
+    <div className="glass-card p-6 h-full flex flex-col justify-between">
+      <div>
+        <div className="flex items-center justify-between mb-6">
+          <span className="font-mono text-[10px] font-bold tracking-[0.2em] text-muted-foreground uppercase opacity-80">
+            Security Score
+          </span>
+          <div className="text-muted-foreground opacity-50">
+            <Shield className="size-5" />
           </div>
         </div>
-        <div className="hidden sm:flex size-9 bg-emerald-500/10 items-center justify-center text-emerald-500 border border-emerald-500/10 shrink-0 self-start">
-           <Shield className="size-5" />
-        </div>
-        {/* Mobile icon - positioned differently */}
-        <div className="sm:hidden absolute top-4 right-4 text-emerald-500/20">
-           <Shield className="size-8" />
+        
+        <div className="flex items-center gap-6">
+          <div className="relative size-16 flex items-center justify-center -rotate-90 shrink-0">
+            <svg className="size-full">
+              <circle cx="32" cy="32" r={radius} fill="none" stroke="currentColor" strokeWidth="4" className="text-muted/10" />
+              <circle 
+                cx="32" cy="32" r={radius} fill="none" stroke={config.color} strokeWidth="4" 
+                strokeDasharray={circumference} strokeDashoffset={offset}
+                strokeLinecap="round"
+                className="transition-all duration-1000 ease-out"
+              />
+            </svg>
+            <span className="absolute inset-0 flex items-center justify-center rotate-90 font-black text-xl">{s.score}</span>
+          </div>
+
+          <div className="flex flex-col gap-2">
+            <SeverityBadge theme={config.theme as any} className="font-black uppercase tracking-widest text-[10px]">
+              Grade {s.grade}
+            </SeverityBadge>
+            <div className={cn(
+              "flex items-center gap-1 text-[11px] font-bold",
+              s.trend === 'up' ? "text-emerald-500" : s.trend === 'down' ? "text-red-500" : "text-muted-foreground"
+            )}>
+              {s.trend === 'up' ? <ArrowUpRight className="size-3.5" /> : s.trend === 'down' ? <ArrowDownRight className="size-3.5" /> : null}
+              {diff > 0 ? `+${diff}` : diff} PTS
+            </div>
+          </div>
         </div>
       </div>
     </div>
