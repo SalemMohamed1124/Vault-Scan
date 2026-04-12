@@ -13,7 +13,7 @@ import {
   Trash2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { sendAIChatMessage } from "@/Services/AI";
+import { useAiChat } from "./useAI";
 import { ChatMessage } from "@/types";
 
 interface AIChatWidgetProps {
@@ -25,7 +25,7 @@ export function AIChatWidget({ scanId }: AIChatWidgetProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+  const { mutate: sendMessageApi, isPending: isLoading } = useAiChat();
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
@@ -43,33 +43,34 @@ export function AIChatWidget({ scanId }: AIChatWidgetProps) {
     }
   }, [isOpen]);
 
-  const sendMessage = async () => {
+  const sendMessage = () => {
     const trimmed = input.trim();
     if (!trimmed || isLoading) return;
 
     const userMessage: ChatMessage = { role: "user", content: trimmed };
     setMessages((prev) => [...prev, userMessage]);
     setInput("");
-    setIsLoading(true);
 
-    try {
-      const data = await sendAIChatMessage(trimmed, messages, scanId);
-
-      setMessages((prev) => [
-        ...prev,
-        { role: "model", content: data.reply },
-      ]);
-    } catch {
-      setMessages((prev) => [
-        ...prev,
-        {
-          role: "model",
-          content: "Sorry, I encountered an error. Please try again.",
+    sendMessageApi(
+      { message: trimmed, history: messages, scanId },
+      {
+        onSuccess: (data) => {
+          setMessages((prev) => [
+            ...prev,
+            { role: "model", content: data.reply },
+          ]);
         },
-      ]);
-    } finally {
-      setIsLoading(false);
-    }
+        onError: () => {
+          setMessages((prev) => [
+            ...prev,
+            {
+              role: "model",
+              content: "Sorry, I encountered an error. Please try again.",
+            },
+          ]);
+        },
+      }
+    );
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
