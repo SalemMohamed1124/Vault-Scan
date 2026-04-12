@@ -1,6 +1,6 @@
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
+
 import {
   Sparkles,
   AlertTriangle,
@@ -11,21 +11,7 @@ import {
   RefreshCw,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import api from "@/lib/api";
-
-interface Priority {
-  title: string;
-  description: string;
-  severity: "critical" | "high" | "medium" | "low";
-  actionable: string;
-}
-
-interface InsightsData {
-  summary: string;
-  priorities: Priority[];
-  positiveFeedback: string;
-  riskTrend: string;
-}
+import { useAiInsights } from "./useAI";
 
 const severityConfig: Record<
   string,
@@ -59,37 +45,46 @@ export function AIInsightsCard() {
     isLoading,
     refetch,
     isFetching,
-  } = useQuery<InsightsData>({
-    queryKey: ["ai-insights"],
-    queryFn: async () => {
-      const { data } = await api.get<InsightsData>("/api/ai/insights");
-      return data;
-    },
-    staleTime: 5 * 60 * 1000,
-    retry: 1,
-  });
+  } = useAiInsights();
 
-  if (isLoading) {
+  if (isLoading || (!insights && isFetching)) {
     return (
-      <div className="glass-card rounded-xl border border-border/50 bg-muted/30 p-6">
-        <div className="flex items-center gap-3 mb-4">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/20">
-            <Sparkles className="h-5 w-5 text-primary" />
-          </div>
-          <div>
-            <h3 className="text-sm font-bold text-foreground">AI Insights</h3>
-            <p className="text-xs text-muted-foreground font-medium">Analyzing your security data...</p>
+      <div className="glass-card rounded-xl border border-border/50 bg-muted/30 overflow-hidden min-h-[220px]">
+        <div className="flex items-center justify-between border-b border-border/50 bg-muted/30 px-6 py-4">
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/20 border border-primary/10">
+              <Sparkles className="h-5 w-5 text-primary" />
+            </div>
+            <div>
+              <h3 className="text-sm font-bold text-foreground">AI Security Insights</h3>
+              <p className="text-[11px] font-medium tracking-wide uppercase text-muted-foreground/80">Analyzing intelligence...</p>
+            </div>
           </div>
         </div>
-        <div className="flex items-center justify-center py-8">
-          <Loader2 className="h-6 w-6 animate-spin text-primary" />
+        <div className="p-6 space-y-4">
+          <div className="h-4 w-3/4 bg-primary/10 animate-pulse rounded" />
+          <div className="h-4 w-1/2 bg-primary/10 animate-pulse rounded" />
+          <div className="space-y-3 pt-4">
+            <div className="h-20 w-full bg-muted/20 animate-pulse rounded-xl" />
+            <div className="h-20 w-full bg-muted/20 animate-pulse rounded-xl" />
+          </div>
         </div>
       </div>
     );
   }
 
   if (!insights || !insights.summary) {
-    return null;
+    return (
+      <div className="glass-card rounded-xl border border-border/50 bg-muted/30 p-8 flex flex-col items-center justify-center text-center gap-3">
+        <div className="size-12 bg-primary/5 flex items-center justify-center text-primary/40 rounded-full">
+          <Sparkles className="size-6" />
+        </div>
+        <div className="space-y-1">
+          <p className="text-sm font-bold">No AI Insights Yet</p>
+          <p className="text-xs text-muted-foreground">Perform more scans to generate intelligent security advice.</p>
+        </div>
+      </div>
+    );
   }
 
   return (
