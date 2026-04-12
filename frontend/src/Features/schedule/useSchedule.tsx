@@ -2,6 +2,8 @@
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { 
   fetchSchedule, 
   deleteSchedule, 
@@ -12,6 +14,7 @@ import type { ScanSchedule } from "@/types";
 
 export default function useSchedule(id?: string) {
   const queryClient = useQueryClient();
+  const pathname = usePathname();
 
   const {
     isPending,
@@ -46,7 +49,14 @@ export default function useSchedule(id?: string) {
     mutationFn: createSchedule,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["schedules"] });
-      toast.success("Schedule created successfully");
+      const isSchedulesPage = pathname === "/schedules";
+      toast.success("Schedule created successfully", {
+        action: !isSchedulesPage ? (
+          <Link href="/schedules" className="text-primary font-bold hover:underline text-xs mr-2 transition-all">
+            View schedules
+          </Link>
+        ) : undefined
+      });
     },
     onError: () => {
       toast.error("Failed to create schedule");
