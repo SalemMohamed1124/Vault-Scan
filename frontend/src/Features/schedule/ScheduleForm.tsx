@@ -24,10 +24,10 @@ export default function ScheduleForm({ schedule, onSuccess }: { schedule?: ScanS
 function ScheduleFormWrapper() {
   const { handleSubmit, onSubmit, isLoading, reset, editMode, close } = useScheduleForm();
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col max-h-[min(82vh,600px)]">
-      <ScrollArea className="flex-1 min-h-0">
-        <div className="flex flex-col gap-5 px-5 py-5">
-          <FieldGroup className="gap-5">
+    <form onSubmit={handleSubmit(onSubmit)} className="grid grid-rows-[1fr_auto] min-h-0 max-h-[82vh] sm:max-h-[75vh]">
+      <ScrollArea className="min-h-0 py-6">
+        <div className="flex flex-col gap-6 px-6 pb-6">
+          <FieldGroup className="gap-6">
             <AssetSelectionField />
             <ScanTypeField />
             <FrequencyField />
@@ -36,12 +36,21 @@ function ScheduleFormWrapper() {
         </div>
       </ScrollArea>
 
-      <div className="flex flex-col sm:flex-row justify-end gap-2 px-5 py-4 border-t bg-background/50 backdrop-blur-sm">
+      <div className="flex flex-col sm:flex-row justify-end gap-2 px-6 py-4 border-t border-border bg-background">
         <div className="flex gap-2 w-full sm:w-auto">
-          <Button variant="outline" type="button" onClick={close} disabled={isLoading} className="flex-1 sm:flex-none h-9 px-4 text-xs">Cancel</Button>
-          <Button variant="outline" type="button" onClick={() => reset()} disabled={isLoading} className="flex-1 sm:flex-none h-9 px-4 text-xs">Reset</Button>
+          <Button variant="outline" type="button" onClick={close} disabled={isLoading} className="flex-1 sm:flex-none h-9 px-4 text-xs">
+            Cancel
+          </Button>
+          <Button variant="outline" type="button" onClick={() => reset()} disabled={isLoading} className="flex-1 sm:flex-none h-9 px-4 text-xs">
+            Reset
+          </Button>
         </div>
-        <Button type="submit" disabled={isLoading} variant="primary" className="w-full sm:w-auto h-9 px-6 text-xs font-semibold gap-2">
+        <Button 
+          type="submit" 
+          disabled={isLoading} 
+          variant="primary" 
+          className="w-full sm:w-auto h-9 px-6 text-xs font-semibold gap-2"
+        >
           {isLoading ? <Spinner /> : editMode ? "Update Schedule" : "Deploy Schedule"}
         </Button>
       </div>
@@ -89,38 +98,29 @@ function ScanTypeField() {
   const { control, formState: { errors } } = useScheduleForm();
   return (
     <Field>
-      <FieldLabel className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground mb-2 ml-1">Scan Type</FieldLabel>
+      <FieldLabel className="text-xs font-semibold text-foreground mb-1.5 ml-0.5">Scan Type</FieldLabel>
       <Controller
         name="scanType"
         control={control}
         render={({ field }) => (
-          <div className="flex bg-muted/30 p-1 rounded-xl border border-border/50">
-            <button
-              type="button"
-              onClick={() => field.onChange("QUICK")}
-              className={cn(
-                "flex-1 flex items-center justify-center gap-2 py-2.5 transition-all text-xs font-bold",
-                field.value === "QUICK"
-                  ? "bg-[#F59E0B] text-black shadow-lg shadow-orange-500/10"
-                  : "text-muted-foreground hover:text-foreground"
-              )}
-            >
-              <Zap className={cn("size-3.5", field.value === "QUICK" ? "fill-black" : "")} />
-              <span className="uppercase tracking-wide">Quick Scan</span>
-            </button>
-            <button
-              type="button"
-              onClick={() => field.onChange("DEEP")}
-              className={cn(
-                "flex-1 flex items-center justify-center gap-2 py-2.5 transition-all text-xs font-bold",
-                field.value === "DEEP"
-                  ? "bg-[#F59E0B] text-black shadow-lg shadow-orange-500/10"
-                  : "text-muted-foreground hover:text-foreground"
-              )}
-            >
-              <Shield className={cn("size-3.5", field.value === "DEEP" ? "fill-black" : "")} />
-              <span className="uppercase tracking-wide">Deep Scan</span>
-            </button>
+          <div className="flex gap-1.5 p-1 rounded-md bg-muted/10 border border-border/50">
+            {[
+              { id: "QUICK", label: "Quick Scan", icon: Zap },
+              { id: "DEEP", label: "Deep Scan", icon: Shield },
+            ].map((mode) => (
+              <button 
+                key={mode.id}
+                type="button"
+                onClick={() => field.onChange(mode.id)}
+                className={cn(
+                  "flex-1 flex items-center justify-center gap-2 py-2 rounded text-xs font-medium transition-all",
+                  field.value === mode.id ? "bg-primary text-primary-foreground shadow-sm" : "hover:bg-muted text-muted-foreground"
+                )}
+              >
+                <mode.icon className="size-3.5" />
+                {mode.label}
+              </button>
+            ))}
           </div>
         )}
       />
