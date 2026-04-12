@@ -19,6 +19,7 @@ type ViewOptions = {
   maxWidth?: string;
   maxHeight?: string;
   noPadding?: boolean;
+  hideCloseButton?: boolean;
 };
 
 type ViewModalContextProps = {
@@ -54,6 +55,7 @@ export function ViewModalContextProvider({
       {children}
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogContent
+          showCloseButton={!options?.hideCloseButton}
           className={cn(
             "p-0 flex flex-col overflow-hidden",
             options?.maxHeight || "max-h-[min(90dvh,850px)]",
