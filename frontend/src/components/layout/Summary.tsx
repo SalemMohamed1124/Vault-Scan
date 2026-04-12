@@ -46,7 +46,7 @@ function SummaryRoot({
   data: SummaryData;
 }) {
   return (
-    <div className="grid gap-3 grid-cols-[repeat(auto-fit,minmax(200px,1fr))]">
+    <div className="grid gap-3 grid-cols-[repeat(auto-fit,minmax(150px,1fr))] max-sm:[&>*:last-child:nth-child(odd)]:col-span-2">
       {React.Children.map(children, (child) => {
         if (React.isValidElement(child)) {
           return React.cloneElement(child as ReactElement<CardProps>, {
@@ -71,12 +71,14 @@ function SummaryCard({
 }: CardProps) {
   if (!data && !counts) return null;
   let countValue: number | string | undefined;
-  if (counts) {
+  if (counts !== undefined) {
     countValue = counts;
   } else if (find) {
     countValue = data?.filter((row) => row[find.column] === find.value).length;
   }
-  if (!countValue) return null;
+
+  // Use a fallback to 0 instead of returning null to avoid layout shifts
+  const displayCount = countValue ?? 0;
 
   return (
     <div
@@ -99,7 +101,7 @@ function SummaryCard({
 
       <div className="flex flex-col gap-1">
         <span className="font-display text-5xl font-bold tracking-tighter text-foreground antialiased ">
-          {countValue}
+          {displayCount}
         </span>
         <div className="text-[10px] font-bold text-muted-foreground/40 uppercase tracking-widest">
           {sublabel || find?.value || "TOTAL_COUNT"}
