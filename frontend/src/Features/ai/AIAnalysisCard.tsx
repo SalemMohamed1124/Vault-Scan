@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+
 import {
   Bot,
   ChevronDown,
@@ -17,35 +17,17 @@ import { cn } from "@/lib/utils";
 import { RiskGauge } from "./RiskGauge";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { AiAnalysis } from "@/types";
-import { fetchAIAnalysis, retryAIAnalysis } from "@/Services/AI";
+import { useAiAnalysis } from "./useAI";
 
 interface AIAnalysisCardProps {
   scanId: string;
 }
 
 export function AIAnalysisCard({ scanId }: AIAnalysisCardProps) {
-  const queryClient = useQueryClient();
   const [expandedSections, setExpandedSections] = useState<Set<string>>(
     new Set(["summary", "recommendations"]),
   );
-
-  // Retry mutation
-  const retryMutation = useMutation({
-    mutationFn: () => retryAIAnalysis(scanId),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["ai-analysis", scanId] });
-    },
-  });
-
-  const { data: analysis, isLoading } = useQuery<AiAnalysis | null>({
-    queryKey: ["ai-analysis", scanId],
-    queryFn: () => fetchAIAnalysis(scanId).catch(() => null),
-    refetchInterval: (query) => {
-      const d = query.state.data;
-      if (d && d.status === "PROCESSING") return 3000;
-      return false;
-    },
-  });
+  const { data: analysis, isLoading, retryAnalysis, isRetrying } = useAiAnalysis(scanId);
 
   function toggleSection(section: string) {
     setExpandedSections((prev) => {
@@ -109,11 +91,11 @@ export function AIAnalysisCard({ scanId }: AIAnalysisCardProps) {
           The scan results are still available in the Findings tab
         </p>
         <button
-          onClick={() => retryMutation.mutate()}
-          disabled={retryMutation.isPending}
+          onClick={() => retryAnalysis()}
+          disabled={isRetrying}
           className="flex items-center gap-2 rounded-lg bg-primary/10 border border-primary/20 px-4 py-2 text-xs font-bold text-primary hover:bg-primary/20 transition-all disabled:opacity-50"
         >
-          {retryMutation.isPending ? (
+          {isRetrying ? (
             <Loader2 className="h-4 w-4 animate-spin" />
           ) : (
             <Bot className="h-4 w-4" />
