@@ -23,3 +23,8 @@ export async function sendAIChatMessage(message: string, history: ChatMessage[],
   });
   return data;
 }
+
+export async function fetchAIInsights() {
+  const { data } = await api.get("/api/ai/insights");
+  return data;
+}
