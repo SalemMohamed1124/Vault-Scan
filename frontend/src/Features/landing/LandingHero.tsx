@@ -5,8 +5,8 @@ import CountUp from "@/components/ui/CountUp";
 
 export function LandingHero() {
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-16 bg-transparent">
-      <div className="relative z-10 max-w-5xl mx-auto px-6 text-center">
+    <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-24 md:pt-32 bg-transparent">
+      <div className="relative z-10 max-w-5xl mx-auto px-6 text-center mt-8 md:mt-0">
         {/* Badge */}
         <div className="inline-flex items-center gap-2 bg-muted border border-border px-3 py-1 mb-8 animate-fade-in-up">
           <div className="h-1.5 w-1.5 bg-primary animate-pulse" />
