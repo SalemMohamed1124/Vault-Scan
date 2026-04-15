@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { useScan, useScanFindings } from "@/Features/scans/useScans";
@@ -11,6 +12,15 @@ export function useScanResults(id: string) {
   const router = useRouter();
 
   const { data: scan, isPending: scanPending, error: scanError } = useScan(id);
+
+  // Automatically fetch fresh findings and AI data when a pending scan finishes
+  useEffect(() => {
+    if (scan?.status === "COMPLETED" || scan?.status === "FAILED") {
+      queryClient.invalidateQueries({ queryKey: ["scan-findings", id] });
+      queryClient.invalidateQueries({ queryKey: ["scan-raw", id] });
+      queryClient.invalidateQueries({ queryKey: ["ai-analysis", id] });
+    }
+  }, [scan?.status, id, queryClient]);
 
   const { data: findings = [], isPending: findingsPending } = useScanFindings(id);
 
