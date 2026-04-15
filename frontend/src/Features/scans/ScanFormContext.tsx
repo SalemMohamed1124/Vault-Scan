@@ -4,6 +4,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { ScanFormSchema, type ScanFormValues } from "./ScanFormSchema";
 import { useAssets } from "@/Features/assets/useAssets";
 import { useViewModal } from "@/Contexts/ViewModalContext";
+import { useRouter } from "next/navigation";
+
 import { useCreateScan } from "./useScanMutations";
 import type { Asset, StartScanPayload } from "@/types";
 
@@ -25,6 +27,7 @@ export function ScanFormProvider({
 }) {
   const { close: modalClose } = useViewModal();
   const { mutateAsync: startScanApi, isPending: isStarting } = useCreateScan();
+  const router = useRouter();
   const { assets: assetsData } = useAssets();
   
   const assets = useMemo(() => assetsData?.data || [], [assetsData]);
@@ -61,9 +64,13 @@ export function ScanFormProvider({
     }
 
     try {
-      await startScanApi(payload);
+      const response = await startScanApi(payload);
       modalClose();
       onClose?.();
+      // Redirect to the new scan page
+      if (response && response.id) {
+        router.push(`/scans/${response.id}`);
+      }
     } catch (error) {
       // Error handled by hook
     }
