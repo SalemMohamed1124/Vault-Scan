@@ -390,7 +390,7 @@ async function seed(): Promise<void> {
       { title: 'SQL Injection', impact: 'Complete database access', likelihood: 'Easy to exploit' },
       { title: 'XSS', impact: 'Session hijacking, phishing', likelihood: 'Moderate' },
     ],
-    attackVectors: ['Database compromise via SQLi', 'User session theft via XSS', 'Credential theft'] as unknown as Record<string, unknown>[],
+    attackVectors: ['Database compromise via SQLi', 'User session theft via XSS', 'Credential theft'],
     technicalDetails:
       'The SQL injection was found in the login form\'s email parameter. The application constructs SQL queries using string concatenation rather than parameterized queries. Testing with payload \' OR 1=1 -- returned the full user list, confirming the vulnerability. The XSS vulnerability exists in the search functionality where user input is reflected without encoding.',
     complianceNotes: 'OWASP Top 10: A01 (Injection), A03 (XSS). PCI DSS: Requirement 6.5.1 (Injection flaws). SOC2: CC6.1 (Logical and Physical Access Controls).',
@@ -416,7 +416,7 @@ async function seed(): Promise<void> {
       { title: 'Open MySQL Port', impact: 'Direct database access from internet', likelihood: 'High' },
       { title: 'Open RDP Port', impact: 'Remote server compromise', likelihood: 'Moderate' },
     ],
-    attackVectors: ['Direct database connection', 'RDP brute force', 'Telnet credential sniffing'] as unknown as Record<string, unknown>[],
+    attackVectors: ['Direct database connection', 'RDP brute force', 'Telnet credential sniffing'],
     technicalDetails:
       'Port scan revealed three high-risk services: MySQL (3306), RDP (3389), and Telnet (23) all accepting external connections. MySQL responded with version banner indicating Community Server 8.0.32.',
     complianceNotes: 'PCI DSS: Requirement 1.3 (Firewall configuration). CIS Controls: 9.2 (Ensure only necessary ports are open).',
@@ -440,7 +440,7 @@ async function seed(): Promise<void> {
     keyFindings: [
       { title: 'Server Version Disclosure', impact: 'Information leakage', likelihood: 'Low' },
     ],
-    attackVectors: ['Version-specific exploit research', 'XSS via missing CSP'] as unknown as Record<string, unknown>[],
+    attackVectors: ['Version-specific exploit research', 'XSS via missing CSP'],
     technicalDetails:
       'Server responds with "nginx/1.18.0 (Ubuntu)" in the Server header. No Content-Security-Policy header is set, allowing unrestricted resource loading.',
     complianceNotes: 'OWASP: A05 (Security Misconfiguration). CIS Controls: 18.3 (Remove unnecessary headers).',

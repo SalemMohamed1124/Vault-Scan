@@ -86,9 +86,7 @@ export class AiAnalysisService {
         parsed.recommendations as unknown as Record<string, unknown>[];
       savedAnalysis.keyFindings =
         parsed.keyFindings as unknown as Record<string, unknown>[];
-      savedAnalysis.attackVectors = parsed.attackVectors.map((v) => ({
-        vector: v,
-      })) as Record<string, unknown>[];
+      savedAnalysis.attackVectors = parsed.attackVectors;
       savedAnalysis.technicalDetails = parsed.technicalDetails;
       savedAnalysis.complianceNotes = parsed.complianceNotes;
       savedAnalysis.promptTokens = result.promptTokens;
@@ -134,6 +132,13 @@ export class AiAnalysisService {
     if (!analysis) {
       throw new NotFoundException(
         'AI analysis not found. It may still be processing.',
+      );
+    }
+
+    // Legacy data handling: flatten objects back to strings if necessary
+    if (analysis.attackVectors && Array.isArray(analysis.attackVectors)) {
+      analysis.attackVectors = (analysis.attackVectors as any[]).map((v) =>
+        typeof v === 'string' ? v : (v.vector || JSON.stringify(v)),
       );
     }
 

@@ -32,7 +32,7 @@ export interface AiAnalysisResponseDto {
   analysisText: string | null;
   recommendations: Record<string, unknown>[] | null;
   keyFindings: Record<string, unknown>[] | null;
-  attackVectors: Record<string, unknown>[] | null;
+  attackVectors: string[] | null;
   technicalDetails: string | null;
   complianceNotes: string | null;
   promptTokens: number | null;

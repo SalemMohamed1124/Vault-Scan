@@ -37,7 +37,7 @@ export class AIAnalysis {
   keyFindings!: Record<string, unknown>[] | null;
 
   @Column({ type: 'jsonb', name: 'attack_vectors', nullable: true })
-  attackVectors!: Record<string, unknown>[] | null;
+  attackVectors!: string[] | null;
 
   @Column({ type: 'text', name: 'technical_details', nullable: true })
   technicalDetails!: string | null;

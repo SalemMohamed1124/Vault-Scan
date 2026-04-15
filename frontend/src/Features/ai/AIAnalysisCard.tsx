@@ -218,14 +218,18 @@ export function AIAnalysisCard({ scanId }: AIAnalysisCardProps) {
           onToggle={() => toggleSection("vectors")}
         >
           <div className="flex flex-wrap gap-2">
-            {analysis.attackVectors.map((vector, i) => (
-              <span
-                key={i}
-                className="rounded-full border border-border bg-background px-3 py-1 text-xs text-foreground"
-              >
-                {vector}
-              </span>
-            ))}
+            {analysis.attackVectors.map((vector, i) => {
+              // Safety check: handle cases where vector might still be an object
+              const vectorLabel = typeof vector === 'string' ? vector : (vector as any).vector || JSON.stringify(vector);
+              return (
+                <span
+                  key={i}
+                  className="rounded-full border border-border bg-background px-3 py-1 text-xs text-foreground"
+                >
+                  {vectorLabel}
+                </span>
+              );
+            })}
           </div>
         </CollapsibleSection>
       )}
