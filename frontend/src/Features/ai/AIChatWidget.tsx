@@ -13,7 +13,7 @@ import {
   Trash2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { useAiChat } from "./useAI";
+import { useAiChat } from "./useAiMutations";
 import { ChatMessage } from "@/types";
 
 interface AIChatWidgetProps {

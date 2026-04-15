@@ -33,28 +33,32 @@ export default function FindingsSummary() {
         variant="critical"
         icon={<ShieldAlert className="size-4" />}
         counts={counts.CRITICAL}
-        sublabel="IMMEDIATE ACTION"
+        sublabel="Impact"
+        className="rounded-none"
       />
       <Summary.Card
         label="High"
         variant="high"
         icon={<AlertTriangle className="size-4" />}
         counts={counts.HIGH}
-        sublabel="URGENT TRIAGE"
+        sublabel="Impact"
+        className="rounded-none"
       />
       <Summary.Card
         label="Medium"
         variant="medium"
         icon={<Info className="size-4" />}
         counts={counts.MEDIUM}
-        sublabel="SCHEDULED FIX"
+        sublabel="Impact"
+        className="rounded-none"
       />
       <Summary.Card
         label="Low"
-        variant="success"
+        variant="low"
         icon={<Shield className="size-4" />}
         counts={counts.LOW}
-        sublabel="LOW PRIORITY"
+        sublabel="Impact"
+        className="rounded-none"
       />
     </Summary>
   );

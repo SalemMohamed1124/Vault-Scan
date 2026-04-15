@@ -15,14 +15,10 @@ import {
   inviteMember as inviteMemberApiReq,
 } from "@/Services/Settings";
 
-export default function useSetting() {
+export function useUpdateProfile() {
   const queryClient = useQueryClient();
 
-  const {
-    isPending: isUpdatingProfile,
-    mutateAsync: updateProfileApi,
-    error: updateProfileError,
-  } = useMutation({
+  return useMutation({
     mutationFn: async ({ name }: { name: string; user: User }) =>
       updateProfileApiReq(name),
     onSuccess: (data, { user }) => {
@@ -33,28 +29,25 @@ export default function useSetting() {
     },
     onError: () => toast.error("Failed to update profile"),
   });
+}
 
-  const {
-    isPending: isChangingPassword,
-    mutateAsync: changePasswordApi,
-    error: changePasswordError,
-  } = useMutation({
+export function useChangePassword() {
+  return useMutation({
     mutationFn: changePasswordApiReq,
     onSuccess: () => toast.success("Password changed successfully"),
     onError: () => toast.error("Failed to update password"),
   });
+}
 
-  const {
-    isPending: isUpdatingOrg,
-    mutateAsync: updateOrgApi,
-    error: updateOrgError,
-  } = useMutation({
+export function useUpdateOrganization() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
     mutationFn: ({ orgId, name }: { orgId: string; name: string }) =>
       updateOrgApiReq(orgId, name),
     onSuccess: (_, { orgId, name }) => {
       toast.success("Organization updated");
 
-      // Update local storage to ensure UI syncs across components
       const orgs = getStoredOrgs();
       const updatedOrgs = orgs.map((o) =>
         o.id === orgId ? { ...o, name } : o,
@@ -66,17 +59,14 @@ export default function useSetting() {
     },
     onError: () => toast.error("Failed to update organization"),
   });
+}
 
-  const {
-    isPending: isDeletingOrg,
-    mutateAsync: deleteOrgApi,
-    error: deleteOrgError,
-  } = useMutation({
+export function useDeleteOrganization() {
+  return useMutation({
     mutationFn: deleteOrgApiReq,
     onSuccess: (_, orgId) => {
       toast.success("Organization deleted");
 
-      // Update local storage
       const orgs = getStoredOrgs();
       setStoredOrgs(orgs.filter((o) => o.id !== orgId));
 
@@ -84,12 +74,12 @@ export default function useSetting() {
     },
     onError: () => toast.error("Failed to delete organization"),
   });
+}
 
-  const {
-    isPending: isUpdatingRole,
-    mutateAsync: updateRoleApi,
-    error: updateRoleError,
-  } = useMutation({
+export function useUpdateMemberRole() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
     mutationFn: ({
       orgId,
       memberId,
@@ -105,12 +95,12 @@ export default function useSetting() {
     },
     onError: () => toast.error("Failed to update role"),
   });
+}
 
-  const {
-    isPending: isRemovingMember,
-    mutateAsync: removeMemberApi,
-    error: removeMemberError,
-  } = useMutation({
+export function useRemoveMember() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
     mutationFn: ({ orgId, memberId }: { orgId: string; memberId: string }) =>
       removeMemberApiReq(orgId, memberId),
     onSuccess: (_, { orgId }) => {
@@ -119,12 +109,12 @@ export default function useSetting() {
     },
     onError: () => toast.error("Failed to remove member"),
   });
+}
 
-  const {
-    isPending: isInvitingMember,
-    mutateAsync: inviteMemberApi,
-    error: inviteMemberError,
-  } = useMutation({
+export function useInviteMember() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
     mutationFn: ({
       orgId,
       payload,
@@ -138,28 +128,4 @@ export default function useSetting() {
     },
     onError: () => toast.error("Failed to invite member"),
   });
-
-  return {
-    isUpdatingProfile,
-    updateProfileApi,
-    updateProfileError,
-    isChangingPassword,
-    changePasswordApi,
-    changePasswordError,
-    isUpdatingOrg,
-    updateOrgApi,
-    updateOrgError,
-    isDeletingOrg,
-    deleteOrgApi,
-    deleteOrgError,
-    isUpdatingRole,
-    updateRoleApi,
-    updateRoleError,
-    isRemovingMember,
-    removeMemberApi,
-    removeMemberError,
-    isInvitingMember,
-    inviteMemberApi,
-    inviteMemberError,
-  };
 }

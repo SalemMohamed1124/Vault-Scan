@@ -2,8 +2,13 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
-import type { ScanStatus } from "@/types";
-import { fetchScans } from "@/Services/Scans";
+import type { ScanStatus, Scan, ScanFinding } from "@/types";
+import { 
+  fetchScans, 
+  fetchScan, 
+  fetchScanFindings, 
+  fetchScanRawOutput 
+} from "@/Services/Scans";
 
 import { calculateScanStats } from "@/lib/scan-utils";
 
@@ -39,4 +44,39 @@ export function useScansStats() {
   }, [scans]);
 
   return { data: stats, isPending };
+}
+
+export function useScan(id: string) {
+  return useQuery<Scan | null>({
+    queryKey: ["scan", id],
+    queryFn: () => fetchScan(id),
+    enabled: !!id,
+    refetchInterval: (data) => {
+      return data?.state?.data?.status === "RUNNING" ? 3000 : false;
+    },
+  });
+}
+
+export function useScanFindings(id: string) {
+  return useQuery<ScanFinding[]>({
+    queryKey: ["scan-findings", id],
+    queryFn: () => fetchScanFindings(id),
+    enabled: !!id,
+  });
+}
+
+export function useScanRawOutput(id: string) {
+  return useQuery<string>({
+    queryKey: ["scan-raw", id],
+    queryFn: async () => {
+      try {
+        const data = await fetchScanRawOutput(id);
+        if (typeof data === "string") return data;
+        return JSON.stringify(data, null, 2);
+      } catch {
+        return "No raw output available.";
+      }
+    },
+    enabled: !!id,
+  });
 }

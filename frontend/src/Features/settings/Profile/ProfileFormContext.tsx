@@ -7,7 +7,7 @@ import {
   ProfileFormSchema, type ProfileFormValues,
   PasswordFormSchema, type PasswordFormValues 
 } from "./ProfileFormSchema";
-import useSetting from "../useSetting";
+import { useUpdateProfile, useChangePassword } from "../useSettingMutations";
 import { useAuth } from "@/hooks/useAuth";
 
 // --- Profile Identity Context ---
@@ -20,7 +20,7 @@ const ProfileFormContext = createContext<ProfileFormContextProps | null>(null);
 
 export function ProfileFormProvider({ children }: { children: ReactNode }) {
   const { user } = useAuth();
-  const { updateProfileApi, isUpdatingProfile } = useSetting();
+  const { mutateAsync: updateProfileApi, isPending: isUpdatingProfile } = useUpdateProfile();
 
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(ProfileFormSchema),
@@ -56,7 +56,7 @@ interface PasswordFormContextProps extends UseFormReturn<PasswordFormValues> {
 const PasswordFormContext = createContext<PasswordFormContextProps | null>(null);
 
 export function PasswordFormProvider({ children }: { children: ReactNode }) {
-  const { changePasswordApi, isChangingPassword } = useSetting();
+  const { mutateAsync: changePasswordApi, isPending: isChangingPassword } = useChangePassword();
 
   const form = useForm<PasswordFormValues>({
     resolver: zodResolver(PasswordFormSchema),

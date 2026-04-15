@@ -10,7 +10,7 @@ import { useViewModal } from "@/Contexts/ViewModalContext";
 import { Spinner } from "@/components/ui/spinner";
 import type { AssetType } from "@/types";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import useAsset from "./useAsset";
+import { useBulkCreateAssets } from "./useAssetMutations";
 
 function detectAssetType(value: string): AssetType {
 
@@ -23,7 +23,7 @@ function detectAssetType(value: string): AssetType {
 
 export default function BulkAssetForm() {
   const { close } = useViewModal();
-  const { bulkAddAssetsApi, isBulkAdding: isLoading } = useAsset();
+  const { mutateAsync: bulkAddAssetsApi, isPending: isLoading } = useBulkCreateAssets();
 
   const { register, handleSubmit, formState: { errors }, reset } = useForm<BulkAssetFormValues>({
     resolver: zodResolver(BulkAssetFormSchema),

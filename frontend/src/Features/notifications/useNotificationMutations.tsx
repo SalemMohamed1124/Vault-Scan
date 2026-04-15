@@ -4,25 +4,23 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { markAsRead, markAllAsRead } from "@/Services/Notifications";
 import { toast } from "sonner";
 
-export function useNotification() {
+export function useMarkAsRead() {
   const queryClient = useQueryClient();
 
-  const { 
-    mutate: markReadApi, 
-    isPending: isMarkReadPending 
-  } = useMutation({
+  return useMutation({
     mutationFn: markAsRead,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["notifications-list"] });
       queryClient.invalidateQueries({ queryKey: ["notifications"] }); 
     },
-    onError: () => toast.error("Failed to mark as read"),
+    onError: () => toast.error("Failed to mark notification as read"),
   });
+}
 
-  const { 
-    mutate: markAllReadApi, 
-    isPending: isMarkAllReadPending 
-  } = useMutation({
+export function useMarkAllAsRead() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
     mutationFn: markAllAsRead,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["notifications-list"] });
@@ -31,11 +29,4 @@ export function useNotification() {
     },
     onError: () => toast.error("Failed to mark all as read"),
   });
-
-  return {
-    markReadApi,
-    isMarkReadPending,
-    markAllReadApi,
-    isMarkAllReadPending,
-  };
 }

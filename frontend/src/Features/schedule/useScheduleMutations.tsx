@@ -1,51 +1,21 @@
 "use client";
 
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { 
-  fetchSchedule, 
   deleteSchedule, 
   createSchedule, 
   updateSchedule 
 } from "@/Services/Schedules";
 import type { ScanSchedule } from "@/types";
 
-export default function useSchedule(id?: string) {
+export function useCreateSchedule() {
   const queryClient = useQueryClient();
   const pathname = usePathname();
 
-  const {
-    isPending,
-    data: schedule,
-    error,
-  } = useQuery({
-    queryFn: () => fetchSchedule(id!),
-    queryKey: ["schedule", id],
-    enabled: !!id,
-  });
-
-  const {
-    isPending: isDeleting,
-    mutateAsync: deleteScheduleApi,
-    error: deleteError,
-  } = useMutation({
-    mutationFn: deleteSchedule,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["schedules"] });
-      toast.success("Schedule deleted successfully");
-    },
-    onError: () => {
-      toast.error("Failed to delete schedule");
-    },
-  });
-
-  const {
-    isPending: isAdding,
-    mutateAsync: addScheduleApi,
-    error: addingError,
-  } = useMutation({
+  return useMutation({
     mutationFn: createSchedule,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["schedules"] });
@@ -62,12 +32,12 @@ export default function useSchedule(id?: string) {
       toast.error("Failed to create schedule");
     },
   });
+}
 
-  const {
-    isPending: isUpdating,
-    mutateAsync: updateScheduleApi,
-    error: updateError,
-  } = useMutation({
+export function useUpdateSchedule(id?: string) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
     mutationFn: ({ id, data }: { id: string; data: Partial<ScanSchedule> }) => 
       updateSchedule(id, data),
     onSuccess: () => {
@@ -79,19 +49,19 @@ export default function useSchedule(id?: string) {
       toast.error("Failed to update schedule");
     },
   });
+}
 
-  return {
-    isPending,
-    error,
-    schedule,
-    isDeleting,
-    deleteScheduleApi,
-    deleteError,
-    isAdding,
-    addScheduleApi,
-    addingError,
-    isUpdating,
-    updateScheduleApi,
-    updateError,
-  };
+export function useDeleteSchedule() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: deleteSchedule,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["schedules"] });
+      toast.success("Schedule deleted successfully");
+    },
+    onError: () => {
+      toast.error("Failed to delete schedule");
+    },
+  });
 }

@@ -9,11 +9,11 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { MoreHorizontal, Download, Copy, Loader2, FileText, Fingerprint, Trash } from "lucide-react";
+import { MoreHorizontal, Download, Copy, Loader2, Fingerprint } from "lucide-react";
 import { useState } from "react";
 import type { Report } from "@/types";
 import { useSidebar } from "@/components/ui/sidebar";
-import useReport from "./useReport";
+import { useDownloadReport } from "./useReportMutations";
 import { toast } from "sonner";
 
 const toClipboard = (text: string, message?: string) => {
@@ -27,7 +27,7 @@ type ReportRowActionsProps = {
 
 export default function ReportRowActions({ report }: ReportRowActionsProps) {
   const { isMobile } = useSidebar();
-  const { downloadReportApi } = useReport();
+  const { downloadReportApi } = useDownloadReport();
   const [isDownloading, setIsDownloading] = useState(false);
   
   const isExpired = new Date(report.expiresAt) < new Date();

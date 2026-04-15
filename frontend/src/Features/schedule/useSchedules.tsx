@@ -1,7 +1,7 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { fetchSchedules, fetchAssetsForSchedules } from "@/Services/Schedules";
+import { fetchSchedules, fetchAssetsForSchedules, fetchSchedule } from "@/Services/Schedules";
 
 export function useSchedules() {
   const {
@@ -27,4 +27,12 @@ export function useAssetsForSchedules() {
   });
 
   return { isPending, assets, error };
+}
+
+export function useSchedule(id: string) {
+  return useQuery({
+    queryKey: ["schedule", id],
+    queryFn: () => fetchSchedule(id),
+    enabled: !!id,
+  });
 }

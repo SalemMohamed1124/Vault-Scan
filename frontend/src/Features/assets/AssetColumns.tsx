@@ -67,7 +67,7 @@ export const AssetColumns: ColumnDef<Asset>[] = [
   {
     accessorKey: "createdAt",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Created" />
+      <DataTableColumnHeader column={column} title="Created At" />
     ),
     cell: ({ row }) => (
       <div className="text-xs text-muted-foreground font-medium">
@@ -82,7 +82,7 @@ export const AssetColumns: ColumnDef<Asset>[] = [
   {
     accessorKey: "updatedAt",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Last Updated" />
+      <DataTableColumnHeader column={column} title="Updated At" />
     ),
     cell: ({ row }) => (
       <div className="text-xs text-muted-foreground font-medium">

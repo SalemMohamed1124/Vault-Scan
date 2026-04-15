@@ -6,7 +6,7 @@ import {
   CheckCircle, XCircle, Sparkles, AlertTriangle, Bell, 
   Check
 } from "lucide-react";
-import { useNotification } from "./useNotification";
+import { useMarkAsRead } from "./useNotificationMutations";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import { format } from "date-fns";
@@ -19,7 +19,7 @@ const TYPE_CONFIG: Record<string, any> = {
 };
 
 export default function NotificationCard({ notification }: { notification: Notification }) {
-  const { markReadApi, isMarkReadPending } = useNotification();
+  const { mutate: markReadApi, isPending: isMarkReadPending } = useMarkAsRead();
   const isUnread = !notification.isRead;
   const config = TYPE_CONFIG[notification.type] || { icon: Bell, color: "text-muted-foreground", bg: "bg-muted/30" };
   const Icon = config.icon;

@@ -11,7 +11,6 @@ import {
   Sun,
   Moon,
   Monitor,
-  Check,
 } from "lucide-react";
 import Link from "next/link";
 
@@ -24,7 +23,6 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
-  DropdownMenuGroup,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 

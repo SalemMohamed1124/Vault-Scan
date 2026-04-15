@@ -73,10 +73,10 @@ export const FindingColumns: ColumnDef<ScanFinding>[] = [
     meta: { search: { placeholder: "Search vulnerabilities..." } },
   },
   {
-    id: "riskLevel",
+    id: "severity",
     accessorFn: (row) => row.vulnerability?.severity,
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Risk Level" />
+      <DataTableColumnHeader column={column} title="Severity" />
     ),
     cell: ({ row }) => {
       const severity = row.original.vulnerability?.severity as Severity;
@@ -102,16 +102,16 @@ export const FindingColumns: ColumnDef<ScanFinding>[] = [
     filterFn: "arrIncludesSome",
   },
   {
-    id: "target",
-    header: "Target Entity",
+    id: "asset",
+    header: "Asset",
     cell: ({ row }) => {
       const asset = row.original.scan?.asset;
       return (
-        <div className="flex flex-col">
-          <span className="font-bold text-[12px] text-foreground">
+        <div className="flex flex-col min-w-0 max-w-[180px]">
+          <span className="font-bold text-[12px] text-foreground truncate" title={asset?.name || "N/A"}>
             {asset?.name || "N/A"}
           </span>
-          <span className="text-[10px] font-mono text-muted-foreground opacity-70">
+          <span className="text-[10px] font-mono text-muted-foreground opacity-70 truncate" title={row.original.location || asset?.value || ""}>
             {row.original.location || asset?.value}
           </span>
         </div>

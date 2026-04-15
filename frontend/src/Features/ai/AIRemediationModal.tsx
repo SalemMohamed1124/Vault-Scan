@@ -15,7 +15,7 @@ import {
   Shield,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { useAiRemediation } from "./useAI";
+import { useAiRemediation } from "./useAiMutations";
 import { useViewModal } from "@/Contexts/ViewModalContext";
 
 export interface AIRemediationViewProps {

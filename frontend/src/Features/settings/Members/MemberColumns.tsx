@@ -24,7 +24,7 @@ export const MemberColumns: ColumnDef<OrgMember>[] = [
     id: "user",
     accessorKey: "user",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Member" />
+      <DataTableColumnHeader column={column} title="User" />
     ),
     cell: ({ row }) => {
       const member = row.original;

@@ -1,10 +1,9 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useSyncExternalStore } from "react";
+import { useCallback, useMemo, useSyncExternalStore } from "react";
 import { useRouter } from "next/navigation";
 import type { Organization, User } from "@/types";
 import {
-  clearTokens,
   getActiveOrgId,
   getStoredOrgs,
   getStoredUser,

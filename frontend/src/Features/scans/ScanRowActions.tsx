@@ -15,7 +15,7 @@ import { useSidebar } from "@/components/ui/sidebar";
 import { useConfirm } from "@/Contexts/ConfirmModalContext";
 import { useViewModal } from "@/Contexts/ViewModalContext";
 import { useRouter } from "next/navigation";
-import useScan from "./useScan";
+import { useDeleteScan } from "./useScanMutations";
 import ScanDetailView from "./ScanDetailView";
 import { Spinner } from "@/components/ui/spinner";
 
@@ -27,7 +27,7 @@ export default function ScanRowActions({ scan }: ScanRowActionsProps) {
   const { isMobile } = useSidebar();
   const { confirm } = useConfirm();
   const { view } = useViewModal();
-  const { deleteScanApi, isDeleting } = useScan();
+  const { mutateAsync: deleteScanApi, isPending: isDeleting } = useDeleteScan();
   const router = useRouter();
 
   const handleShowDetails = () => {

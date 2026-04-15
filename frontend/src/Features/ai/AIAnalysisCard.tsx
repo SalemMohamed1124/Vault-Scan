@@ -18,6 +18,7 @@ import { RiskGauge } from "./RiskGauge";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { AiAnalysis } from "@/types";
 import { useAiAnalysis } from "./useAI";
+import { useRetryAiAnalysis } from "./useAiMutations";
 
 interface AIAnalysisCardProps {
   scanId: string;
@@ -27,7 +28,8 @@ export function AIAnalysisCard({ scanId }: AIAnalysisCardProps) {
   const [expandedSections, setExpandedSections] = useState<Set<string>>(
     new Set(["summary", "recommendations"]),
   );
-  const { data: analysis, isLoading, retryAnalysis, isRetrying } = useAiAnalysis(scanId);
+  const { data: analysis, isLoading } = useAiAnalysis(scanId);
+  const { mutate: retryAnalysis, isPending: isRetrying } = useRetryAiAnalysis(scanId);
 
   function toggleSection(section: string) {
     setExpandedSections((prev) => {

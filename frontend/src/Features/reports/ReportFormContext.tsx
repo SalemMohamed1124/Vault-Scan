@@ -5,7 +5,7 @@ import { useForm, UseFormReturn, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ReportFormSchema, type ReportFormValues } from "./ReportFormSchema";
 import { useCompletedScansForReports } from "./useReports";
-import useReport from "./useReport";
+import { useGenerateReport } from "./useReportMutations";
 import { useViewModal } from "@/Contexts/ViewModalContext";
 import type { Scan } from "@/types";
 
@@ -28,7 +28,7 @@ export function ReportFormProvider({
 }) {
   const { close } = useViewModal();
   const { scans = [], isPending: scansLoading } = useCompletedScansForReports();
-  const { generateReportApi, isGenerating } = useReport();
+  const { mutateAsync: generateReportApi, isPending: isGenerating } = useGenerateReport();
   
   const form = useForm<ReportFormValues>({
     resolver: zodResolver(ReportFormSchema),

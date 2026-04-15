@@ -1,7 +1,7 @@
 "use client";
 
 import { useOrg } from "@/hooks/useOrg";
-import useSetting from "../useSetting";
+import { useUpdateMemberRole, useRemoveMember } from "../useSettingMutations";
 import { Button } from "@/components/ui/button";
 import { 
   Trash2, Settings2, ShieldCheck, ShieldAlert, Shield, 
@@ -34,7 +34,8 @@ const ROLE_ICONS: Record<OrgRole, any> = {
 export default function MemberRowActions({ member }: MemberRowActionsProps) {
   const { activeOrgId } = useOrg();
   const { user: currentUser } = useAuth();
-  const { updateRoleApi, removeMemberApi } = useSetting();
+  const { mutateAsync: updateRoleApi } = useUpdateMemberRole();
+  const { mutateAsync: removeMemberApi } = useRemoveMember();
   const { confirm } = useConfirm();
   const { isMobile } = useSidebar();
   const isSelf = member.user.id === currentUser?.id;

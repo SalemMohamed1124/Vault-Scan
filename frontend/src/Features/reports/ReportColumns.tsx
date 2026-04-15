@@ -72,15 +72,15 @@ export const ReportColumns: ColumnDef<Report>[] = [
     },
   },
   {
-    id: "Generated At",
+    id: "createdAt",
     accessorKey: "createdAt",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Generated At" />
+      <DataTableColumnHeader column={column} title="Created At" />
     ),
     cell: ({ row }) => (
       <div className="flex flex-col">
         <span className="text-xs font-bold text-foreground">
-          {formatRelativeTime(row.getValue("Generated At"))}
+          {formatRelativeTime(row.getValue("createdAt"))}
         </span>
       </div>
     ),
@@ -88,10 +88,10 @@ export const ReportColumns: ColumnDef<Report>[] = [
     sortingFn: "datetime",
   },
   {
-    id: "Status",
+    id: "expiresAt",
     accessorKey: "expiresAt",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Status" />
+      <DataTableColumnHeader column={column} title="Expires At" />
     ),
     cell: ({ row }) => {
       const isExpired = new Date(row.original.expiresAt) < new Date();

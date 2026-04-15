@@ -19,7 +19,8 @@ import {
   MapPin,
   Sparkles
 } from "lucide-react";
-import { cn, severityColor, severityDot } from "@/lib/utils";
+import { cn } from "@/lib/utils";
+import { SeverityBadge } from "@/components/layout/SeverityBadge";
 import { Button } from "@/components/ui/button";
 import { AIRemediationButton } from "@/Features/ai/AIRemediationModal";
 import type { ScanFinding } from "@/types";
@@ -46,7 +47,6 @@ export function FindingsTable({ findings, isGrouped = false }: FindingsTableProp
           <TableHeader className="bg-muted/30">
           <TableRow className="hover:bg-transparent">
             <TableHead className="w-10" />
-            <TableHead className="w-10 px-0" />
             <TableHead className="text-xs font-bold uppercase tracking-widest text-muted-foreground/80">Vulnerability</TableHead>
             <TableHead className="text-xs font-bold uppercase tracking-widest text-muted-foreground/80 hidden sm:table-cell">Category</TableHead>
             <TableHead className="text-xs font-bold uppercase tracking-widest text-muted-foreground/80 hidden md:table-cell">Location</TableHead>
@@ -70,23 +70,15 @@ export function FindingsTable({ findings, isGrouped = false }: FindingsTableProp
                     <ChevronDown className="size-4 text-muted-foreground/30 group-hover:text-foreground transition-colors" />
                   )}
                 </TableCell>
-                <TableCell className="px-0">
-                  <div className={cn("size-2 rounded-full mx-auto shadow-sm", severityDot(finding.vulnerability?.severity ?? "LOW"))} />
-                </TableCell>
                 <TableCell>
-                  <div className="flex flex-col gap-0.5">
-                    <span className="text-xs font-semibold text-foreground leading-tight">
+                  <div className="flex flex-col items-start gap-1">
+                    <span className="text-xs font-semibold text-foreground leading-tight truncate max-w-[220px]" title={finding.vulnerability?.name ?? "Unknown Finding"}>
                       {finding.vulnerability?.name ?? "Unknown Finding"}
                     </span>
                     {!isGrouped && (
-                      <span className={cn(
-                        "text-[10px] font-extrabold uppercase tracking-wide",
-                        finding.vulnerability?.severity === "CRITICAL" ? "text-red-500" :
-                        finding.vulnerability?.severity === "HIGH" ? "text-orange-500" :
-                        finding.vulnerability?.severity === "MEDIUM" ? "text-amber-500" : "text-blue-500"
-                      )}>
+                      <SeverityBadge theme={finding.vulnerability?.severity as any || "MEDIUM"}>
                         {finding.vulnerability?.severity}
-                      </span>
+                      </SeverityBadge>
                     )}
                   </div>
                 </TableCell>
@@ -96,7 +88,7 @@ export function FindingsTable({ findings, isGrouped = false }: FindingsTableProp
                   </span>
                 </TableCell>
                 <TableCell className="hidden md:table-cell">
-                  <div className="flex items-center gap-1.5 text-xs font-mono text-muted-foreground truncate max-w-[120px] sm:max-w-[200px]">
+                  <div className="flex items-center gap-1.5 text-xs font-mono text-muted-foreground truncate max-w-[150px] sm:max-w-[250px]" title={finding.location || "N/A"}>
                     <MapPin className="size-3.5 shrink-0 opacity-50" />
                     {finding.location || "N/A"}
                   </div>
@@ -111,7 +103,7 @@ export function FindingsTable({ findings, isGrouped = false }: FindingsTableProp
 
               {expandedIds.has(finding.id) && (
                 <TableRow>
-                  <TableCell colSpan={6} className="p-0 border-t border-border/30">
+                  <TableCell colSpan={5} className="p-0 border-t border-border/30">
                     <div className="bg-muted/10 p-5 sm:p-6 space-y-6 animate-in fade-in duration-300 w-full min-w-0">
                       {/* Mobile Additional Info */}
                       <div className="md:hidden space-y-3 pb-4 mb-4 border-b border-border/10">

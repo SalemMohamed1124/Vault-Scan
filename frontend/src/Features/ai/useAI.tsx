@@ -1,12 +1,8 @@
 "use client";
 
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { toast } from "sonner";
+import { useQuery } from "@tanstack/react-query";
 import { 
   fetchAIAnalysis, 
-  retryAIAnalysis, 
-  fetchAIRemediation, 
-  sendAIChatMessage, 
   fetchAIInsights 
 } from "@/Services/AI";
 import type { AiAnalysis, ChatMessage } from "@/types";
@@ -44,9 +40,7 @@ export interface InsightsData {
 }
 
 export function useAiAnalysis(scanId: string) {
-  const queryClient = useQueryClient();
-
-  const query = useQuery<AiAnalysis | null>({
+  return useQuery<AiAnalysis | null>({
     queryKey: ["ai-analysis", scanId],
     queryFn: () => fetchAIAnalysis(scanId).catch(() => null),
     refetchInterval: (query) => {
@@ -54,37 +48,6 @@ export function useAiAnalysis(scanId: string) {
       if (d && d.status === "PROCESSING") return 3000;
       return false;
     },
-  });
-
-  const retryMutation = useMutation({
-    mutationFn: () => retryAIAnalysis(scanId),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["ai-analysis", scanId] });
-      toast.success("Retrying AI analysis...");
-    },
-    onError: () => {
-      toast.error("Failed to retry AI analysis");
-    }
-  });
-
-  return {
-    ...query,
-    retryAnalysis: retryMutation.mutate,
-    isRetrying: retryMutation.isPending,
-  };
-}
-
-export function useAiChat() {
-  return useMutation({
-    mutationFn: ({ message, history, scanId }: { message: string, history: ChatMessage[], scanId?: string }) => 
-      sendAIChatMessage(message, history, scanId)
-  });
-}
-
-export function useAiRemediation(findingId: string) {
-  return useMutation<RemediationGuide, Error, void>({
-    mutationFn: () => fetchAIRemediation(findingId),
-    onError: () => toast.error("Failed to generate remediation guide"),
   });
 }
 

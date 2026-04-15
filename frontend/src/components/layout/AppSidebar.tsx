@@ -110,22 +110,23 @@ export default function AppSidebar() {
           // Positioning — floats over content, starts below the header (top-14)
           "fixed top-14 left-0 bottom-0 z-50 w-64",
           // Appearance — same bg as app, glass-like with shadow
-          "flex flex-col bg-background/95 backdrop-blur-md",
+          "flex flex-col bg-background/98 backdrop-blur-sm",
           "shadow-2xl shadow-black/30",
+          "will-change-transform", // Hardware acceleration for sliding
           // Slide animation
           "transition-transform duration-300 ease-in-out",
-          isOpen ? "translate-x-0" : "-translate-x-full",
+          isOpen ? "translate-x-0 delay-75" : "-translate-x-full",
         ].join(" ")}
       >
-        {/* Nav items */}
-        <ScrollArea className="flex-1 overflow-x-hidden">
+        {/* Nav items (Using native scroll for better mobile performance) */}
+        <div className="flex-1 overflow-y-auto overflow-x-hidden custom-scrollbar overscroll-contain">
           <nav className="py-3 px-3">
             {NAV_LINKS.map((section, si) => (
               <SectionGroup key={si} section={section} />
             ))}
             <SidebarQuickActions />
           </nav>
-        </ScrollArea>
+        </div>
 
         {/* Footer */}
         <SidebarFooter />

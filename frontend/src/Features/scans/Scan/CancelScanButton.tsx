@@ -1,11 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { toast } from "sonner";
+import { useCancelScan } from "@/Features/scans/useScanMutations";
 import { XCircle, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import api from "@/lib/api";
 
 interface CancelScanButtonProps {
   scanId: string;
@@ -13,21 +11,14 @@ interface CancelScanButtonProps {
 }
 
 export function CancelScanButton({ scanId, onCancelled }: CancelScanButtonProps) {
-  const queryClient = useQueryClient();
   const [confirming, setConfirming] = useState(false);
 
-  const cancel = useMutation({
-    mutationFn: () => api.delete(`/api/scans/${scanId}/cancel`),
-    onSuccess: () => {
-      toast.success("Scan cancelled");
-      queryClient.invalidateQueries({ queryKey: ["scan", scanId] });
-      queryClient.invalidateQueries({ queryKey: ["scans"] });
-      onCancelled?.();
-    },
-    onError: () => {
-      toast.error("Failed to cancel scan");
-    },
-  });
+  const cancel = useCancelScan(scanId);
+
+  const handleCancel = async () => {
+    await cancel.mutateAsync();
+    onCancelled?.();
+  };
 
   if (confirming) {
     return (

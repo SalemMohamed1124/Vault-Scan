@@ -4,7 +4,8 @@ import { useQuery } from "@tanstack/react-query";
 import type { Scan } from "@/types";
 import { 
   fetchReports, 
-  fetchCompletedScansForReports 
+  fetchCompletedScansForReports,
+  fetchReport
 } from "@/Services/Reports";
 
 export function useReports() {
@@ -31,4 +32,12 @@ export function useCompletedScansForReports() {
   });
 
   return { scans, isPending, error };
+}
+
+export function useReport(id: string) {
+  return useQuery({
+    queryKey: ["reports", id],
+    queryFn: () => fetchReport(id),
+    enabled: !!id,
+  });
 }

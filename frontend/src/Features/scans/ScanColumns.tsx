@@ -4,8 +4,8 @@ import type { ColumnDef } from "@tanstack/react-table";
 import type { Scan, ScanStatus, ScanType, Severity } from "@/types";
 import { DataTableColumnHeader } from "@/components/dataTable/DataTableColumnHeader";
 import { SeverityBadge } from "@/components/layout/SeverityBadge";
-import { formatRelativeTime, formatDuration, severityDot } from "@/lib/utils";
-import { CheckCircle2, Loader2, XCircle, Clock, Ban } from "lucide-react";
+import { formatRelativeTime, formatDuration } from "@/lib/utils";
+import { Loader2 } from "lucide-react";
 import ScanMobileCard from "./ScanMobileCard";
 import ScanRowActions from "./ScanRowActions";
 
@@ -22,7 +22,7 @@ export const ScanColumns: ColumnDef<Scan>[] = [
     accessorKey: "asset",
     accessorFn: (row) => row.asset?.name || row.asset?.value,
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Target Asset" />
+      <DataTableColumnHeader column={column} title="Asset" />
     ),
     cell: ({ row }) => {
       const asset = row.original.asset;
@@ -49,7 +49,7 @@ export const ScanColumns: ColumnDef<Scan>[] = [
     id: "type",
     accessorKey: "type",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Scan Type" />
+      <DataTableColumnHeader column={column} title="Type" />
     ),
     cell: ({ row }) => {
       const type = row.getValue("type") as ScanType;
@@ -101,7 +101,7 @@ export const ScanColumns: ColumnDef<Scan>[] = [
   {
     accessorKey: "findingsSummary",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Findings" />
+      <DataTableColumnHeader column={column} title="Findings Summary" />
     ),
     cell: ({ row }) => {
       const summary = row.original.findingsSummary ?? {
@@ -134,7 +134,7 @@ export const ScanColumns: ColumnDef<Scan>[] = [
     id: "startedAt",
     accessorKey: "startedAt",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Started" />
+      <DataTableColumnHeader column={column} title="Started At" />
     ),
     cell: ({ row }) => (
       <div className="text-[11px] font-medium text-muted-foreground opacity-80">

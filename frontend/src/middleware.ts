@@ -4,7 +4,7 @@ import type { NextRequest } from 'next/server';
 const PUBLIC_PATHS = ['/', '/login', '/register'];
 const AUTH_PATHS = ['/login', '/register'];
 
-export function proxy(request: NextRequest) {
+export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   
   // Use 'access_token' to match the cookie name found in Services/auth.ts

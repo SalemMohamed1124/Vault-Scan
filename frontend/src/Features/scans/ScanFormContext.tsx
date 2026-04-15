@@ -4,7 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { ScanFormSchema, type ScanFormValues } from "./ScanFormSchema";
 import { useAssets } from "@/Features/assets/useAssets";
 import { useViewModal } from "@/Contexts/ViewModalContext";
-import useScan from "./useScan";
+import { useCreateScan } from "./useScanMutations";
 import type { Asset, StartScanPayload } from "@/types";
 
 interface ScanFormContextProps extends UseFormReturn<ScanFormValues> {
@@ -24,7 +24,7 @@ export function ScanFormProvider({
   children: ReactNode;
 }) {
   const { close: modalClose } = useViewModal();
-  const { startScanApi, isStarting } = useScan();
+  const { mutateAsync: startScanApi, isPending: isStarting } = useCreateScan();
   const { assets: assetsData } = useAssets();
   
   const assets = useMemo(() => assetsData?.data || [], [assetsData]);

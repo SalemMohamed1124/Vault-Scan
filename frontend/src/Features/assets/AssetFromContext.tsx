@@ -6,7 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { AssetFormSchema, type AssetFormValues } from "./AssetFormSchema";
 import { useViewModal } from "@/Contexts/ViewModalContext";
 import type { Asset } from "@/types";
-import useAsset from "./useAsset";
+import { useCreateAsset, useUpdateAsset } from "./useAssetMutations";
   
 interface AssetFormContextProps extends UseFormReturn<AssetFormValues> {
   onSubmit: (values: AssetFormValues) => void;
@@ -36,7 +36,8 @@ export function AssetFormProvider({
     },
   });
 
-  const { addAssetApi, isAdding, updateAssetApi, isUpdating } = useAsset();
+  const { mutateAsync: addAssetApi, isPending: isAdding } = useCreateAsset();
+  const { mutateAsync: updateAssetApi, isPending: isUpdating } = useUpdateAsset(asset?.id);
 
   const isLoading = isAdding || isUpdating;
 

@@ -83,7 +83,7 @@ export const NotificationColumns: ColumnDef<Notification, any>[] = [
   {
     accessorKey: "createdAt",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Date" />
+      <DataTableColumnHeader column={column} title="Created At" />
     ),
     cell: ({ row }) => (
       <span className="text-[11px] font-bold text-muted-foreground opacity-60 uppercase tracking-widest">

@@ -3,18 +3,8 @@
 import type { Scan, ScanStatus } from "@/types";
 import { MobileCard } from "@/components/layout/MobileCard";
 import { SeverityBadge } from "@/components/layout/SeverityBadge";
-import { formatRelativeTime, formatDuration, severityDot } from "@/lib/utils";
-import {
-  Play,
-  CheckCircle2,
-  Loader2,
-  XCircle,
-  Clock,
-  Ban,
-  Calendar,
-  Timer,
-  type LucideIcon,
-} from "lucide-react";
+import { formatRelativeTime, formatDuration } from "@/lib/utils";
+import { Calendar, Timer } from "lucide-react";
 import { cn } from "@/lib/utils";
 import ScanRowActions from "./ScanRowActions";
 

@@ -1,7 +1,7 @@
 "use client";
 
 import { useNotifications } from "./useNotifications";
-import { useNotification } from "./useNotification";
+import { useMarkAsRead, useMarkAllAsRead } from "./useNotificationMutations";
 import { NotificationColumns } from "./NotificationColumns";
 import { DataTable } from "@/components/dataTable/DataTable";
 import { Button } from "@/components/ui/button";
@@ -13,7 +13,7 @@ import type { Notification } from "@/types";
 export default function NotificationsTable() {
   const router = useRouter();
   const { notifications, isPending, error } = useNotifications();
-  const { markReadApi } = useNotification();
+  const { mutate: markReadApi } = useMarkAsRead();
 
   function handleRowClick(notification: Notification) {
     if (!notification.isRead) {
@@ -48,7 +48,7 @@ export default function NotificationsTable() {
 }
 
 function MarkAllAsReadButton() {
-  const { markAllReadApi, isMarkAllReadPending } = useNotification();
+  const { mutate: markAllReadApi, isPending: isMarkAllReadPending } = useMarkAllAsRead();
   const { unreadCount } = useNotifications();
   if (!unreadCount) return null;
   return (

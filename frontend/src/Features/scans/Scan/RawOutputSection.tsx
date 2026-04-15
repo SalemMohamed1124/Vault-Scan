@@ -1,8 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
-import api from "@/lib/api";
+import { useScanRawOutput } from "@/Features/scans/useScans";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Terminal, Copy, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -14,18 +13,7 @@ interface RawOutputSectionProps {
 export function RawOutputSection({ scanId }: RawOutputSectionProps) {
   const [copied, setCopied] = useState(false);
 
-  const { data: rawOutput, isLoading } = useQuery<string>({
-    queryKey: ["scan-raw", scanId],
-    queryFn: async () => {
-      try {
-        const { data } = await api.get(`/api/scans/${scanId}/raw-output`);
-        if (typeof data === "string") return data;
-        return JSON.stringify(data, null, 2);
-      } catch {
-        return "No raw output available.";
-      }
-    },
-  });
+  const { data: rawOutput, isLoading } = useScanRawOutput(scanId);
 
   const handleCopy = async () => {
     if (!rawOutput) return;

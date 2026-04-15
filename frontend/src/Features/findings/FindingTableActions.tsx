@@ -3,7 +3,7 @@
 import { Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useConfirm } from "@/Contexts/ConfirmModalContext";
-import { useDeleteFindings } from "./useFindings";
+import { useDeleteManyFindings } from "./useFindingMutations";
 
 interface FindingTableActionsProps {
   selectedIds?: string[];
@@ -14,7 +14,7 @@ export function FindingTableActions({
   selectedIds = [],
   onComplete,
 }: FindingTableActionsProps) {
-  const { deleteMany } = useDeleteFindings();
+  const deleteMany = useDeleteManyFindings();
   const { confirm } = useConfirm();
 
   const handleBulkDelete = () => {

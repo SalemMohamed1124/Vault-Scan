@@ -2,11 +2,8 @@
 
 import { useEffect, useRef, useState, useCallback } from "react";
 import {
-  Loader2,
   Shield,
-  Wifi,
   Globe,
-  Search,
   Lock,
   Server,
   CheckCircle2,
@@ -28,6 +25,7 @@ import {
   ChevronRight,
   Terminal,
 } from "lucide-react";
+import { SeverityBadge } from "@/components/layout/SeverityBadge";
 import { cn } from "@/lib/utils";
 import { getAccessToken } from "@/Services/auth";
 
@@ -184,25 +182,7 @@ function extractFindingsCount(phase: string): number | null {
   return match ? parseInt(match[1], 10) : null;
 }
 
-// Severity badge
-function SevBadge({ severity }: { severity: string }) {
-  const colors: Record<string, string> = {
-    CRITICAL: "bg-red-500/20 text-red-400 border-red-500/30",
-    HIGH: "bg-orange-500/20 text-orange-400 border-orange-500/30",
-    MEDIUM: "bg-yellow-500/20 text-yellow-400 border-yellow-500/30",
-    LOW: "bg-primary/20 text-primary border-primary/30",
-  };
-  return (
-    <span
-      className={cn(
-        "text-[9px] font-bold px-1.5 py-0.5 rounded border uppercase",
-        colors[severity] || colors.MEDIUM,
-      )}
-    >
-      {severity}
-    </span>
-  );
-}
+
 
 export function ScanProgress({ scanId, onComplete }: ScanProgressProps) {
   const [progress, setProgress] = useState(0);
@@ -452,7 +432,7 @@ export function ScanProgress({ scanId, onComplete }: ScanProgressProps) {
                   ) : line.type === "finding" ? (
                     <span className="flex items-center gap-2">
                       <span className="text-red-400 font-medium">{line.text}</span>
-                      {line.severity && <SevBadge severity={line.severity} />}
+                      {line.severity && <SeverityBadge theme={line.severity as any} className="text-[9px] px-1.5 py-0.5 leading-none h-auto">{line.severity}</SeverityBadge>}
                     </span>
                   ) : (
                     <span className="text-slate-300 font-medium">{line.text}</span>

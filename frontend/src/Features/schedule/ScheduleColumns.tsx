@@ -85,7 +85,7 @@ export const ScheduleColumns: ColumnDef<ScanSchedule>[] = [
   {
     accessorKey: "nextRunAt",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Next Scan" />
+      <DataTableColumnHeader column={column} title="Next Run At" />
     ),
     meta: { sort: true },
     cell: ({ row }) => {

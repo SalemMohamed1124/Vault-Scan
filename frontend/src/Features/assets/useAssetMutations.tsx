@@ -1,12 +1,11 @@
 "use client";
 
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { Asset } from "@/types";
 import { 
-  fetchAsset, 
   deleteAsset, 
   createAsset, 
   updateAsset, 
@@ -14,25 +13,10 @@ import {
 } from "@/Services/Assets";
 import type { AxiosError } from "axios";
 
-export default function useAsset(id?: string) {
+export function useDeleteAsset() {
   const queryClient = useQueryClient();
-  const pathname = usePathname();
 
-  const {
-    isPending,
-    data: asset,
-    error,
-  } = useQuery({
-    queryFn: () => fetchAsset(id!),
-    queryKey: ["asset", id],
-    enabled: !!id,
-  });
-
-  const {
-    isPending: isDeleting,
-    mutateAsync: deleteAssetApi,
-    error: deleteError,
-  } = useMutation({
+  return useMutation({
     mutationFn: deleteAsset,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["assets"] });
@@ -42,12 +26,13 @@ export default function useAsset(id?: string) {
       toast.error(`Failed to delete asset`, { position: "top-center" });
     },
   });
+}
 
-  const {
-    isPending: isAdding,
-    mutateAsync: addAssetApi,
-    error: addingError,
-  } = useMutation({
+export function useCreateAsset() {
+  const queryClient = useQueryClient();
+  const pathname = usePathname();
+
+  return useMutation({
     mutationFn: createAsset,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["assets"] });
@@ -65,12 +50,12 @@ export default function useAsset(id?: string) {
       toast.error("Failed to add new asset", { position: "top-center" });
     },
   });
+}
 
-  const {
-    isPending: isUpdating,
-    mutateAsync: updateAssetApi,
-    error: updateError,
-  } = useMutation({
+export function useUpdateAsset(id?: string) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
     mutationFn: ({ id, updatedAsset }: { id: string; updatedAsset: Partial<Asset> }) => 
       updateAsset(id, updatedAsset),
     onSuccess: () => {
@@ -82,12 +67,13 @@ export default function useAsset(id?: string) {
       toast.error("Failed to update asset", { position: "top-center" });
     },
   });
+}
 
-  const {
-    isPending: isBulkAdding,
-    mutateAsync: bulkAddAssetsApi,
-    error: bulkAddingError,
-  } = useMutation({
+export function useBulkCreateAssets() {
+  const queryClient = useQueryClient();
+  const pathname = usePathname();
+
+  return useMutation({
     mutationFn: bulkCreateAssets,
     onSuccess: (data: { created: Asset[]; skipped: any[] }) => {
       const { created, skipped } = data;
@@ -111,22 +97,4 @@ export default function useAsset(id?: string) {
       toast.error(error.response?.data?.message || "Failed to bulk register assets");
     },
   });
-
-  return {
-    isPending,
-    error,
-    asset,
-    isDeleting,
-    deleteAssetApi,
-    deleteError,
-    isAdding,
-    addAssetApi,
-    addingError,
-    isUpdating,
-    updateAssetApi,
-    updateError,
-    isBulkAdding,
-    bulkAddAssetsApi,
-    bulkAddingError,
-  };
 }

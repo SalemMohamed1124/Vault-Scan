@@ -44,3 +44,13 @@ export async function createScanReport(scanId: string, format: string = "PDF") {
   const { data } = await api.post(`/api/reports`, { scanId, format });
   return data;
 }
+
+export async function fetchScanRawOutput(id: string) {
+  const { data } = await api.get(`/api/scans/${id}/raw-output`);
+  return data;
+}
+
+export async function cancelScan(id: string) {
+  const { data } = await api.delete(`/api/scans/${id}/cancel`);
+  return data;
+}

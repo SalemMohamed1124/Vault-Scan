@@ -8,7 +8,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { MoreHorizontal, Eye, ExternalLink, Trash2, Wand2 } from "lucide-react";
-import { useDeleteFindings } from "./useFindings";
+import { useDeleteFinding } from "./useFindingMutations";
 import { useConfirm } from "@/Contexts/ConfirmModalContext";
 import { useSidebar } from "@/components/ui/sidebar";
 import { useRouter } from "next/navigation";
@@ -18,7 +18,7 @@ import { AIRemediationView } from "@/Features/ai/AIRemediationModal";
 import type { ScanFinding } from "@/types";
 
 export default function FindingRowActions({ finding }: { finding: ScanFinding }) {
-  const { deleteOne } = useDeleteFindings();
+  const deleteOne = useDeleteFinding();
   const { confirm } = useConfirm();
   const { view } = useViewModal();
   const { isMobile } = useSidebar();

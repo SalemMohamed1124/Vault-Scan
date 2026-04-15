@@ -2,7 +2,7 @@
 
 import { useQuery } from "@tanstack/react-query";
 import type { AssetType } from "@/types";
-import { fetchAssets, fetchAssetStats } from "@/Services/Assets";
+import { fetchAssets, fetchAssetStats, fetchAsset } from "@/Services/Assets";
 
 export function useAssets(params?: {
   search?: string;
@@ -33,4 +33,12 @@ export function useAssetsStats() {
   });
 
   return { isPending, stats, error };
+}
+
+export function useAsset(id: string) {
+  return useQuery({
+    queryKey: ["asset", id],
+    queryFn: () => fetchAsset(id),
+    enabled: !!id,
+  });
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import useSchedule from "./useSchedule";
+import { useUpdateSchedule, useDeleteSchedule } from "./useScheduleMutations";
 import { useConfirm } from "@/Contexts/ConfirmModalContext";
 import { useScheduleFormModals } from "./useScheduleFormModals";
 import { Button } from "@/components/ui/button";
@@ -28,7 +28,8 @@ type ScheduleRowActionsProps = {
 };
 
 export default function ScheduleRowActions({ schedule }: ScheduleRowActionsProps) {
-  const { updateScheduleApi, deleteScheduleApi, isUpdating, isDeleting } = useSchedule();
+  const { mutateAsync: updateScheduleApi, isPending: isUpdating } = useUpdateSchedule(schedule.id);
+  const { mutateAsync: deleteScheduleApi, isPending: isDeleting } = useDeleteSchedule();
   const { confirm } = useConfirm();
   const { openEdit } = useScheduleFormModals();
   const { isMobile } = useSidebar();

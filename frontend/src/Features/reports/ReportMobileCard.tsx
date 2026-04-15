@@ -4,14 +4,11 @@ import type { Report } from "@/types";
 import { MobileCard } from "@/components/layout/MobileCard";
 import { SeverityBadge } from "@/components/layout/SeverityBadge";
 import {
-  FileText,
   FileJson,
   Globe,
   File,
-  Download,
   Clock,
   Calendar,
-  ShieldCheck,
 } from "lucide-react";
 import { cn, formatDateTime, formatRelativeTime } from "@/lib/utils";
 import ReportRowActions from "./ReportRowActions";

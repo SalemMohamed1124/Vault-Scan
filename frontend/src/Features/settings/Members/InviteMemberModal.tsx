@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useOrg } from "@/hooks/useOrg";
-import useSetting from "../useSetting";
+import { useInviteMember } from "../useSettingMutations";
 import { 
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger 
 } from "@/components/ui/dialog";
@@ -15,7 +15,7 @@ import type { OrgRole } from "@/types";
 
 export default function InviteMemberModal() {
   const { activeOrgId } = useOrg();
-  const { inviteMemberApi, isInvitingMember } = useSetting();
+  const { mutateAsync: inviteMemberApi, isPending: isInvitingMember } = useInviteMember();
   
   const [open, setOpen] = useState(false);
   const [email, setEmail] = useState("");

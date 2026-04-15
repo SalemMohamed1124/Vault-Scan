@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useOrg } from "@/hooks/useOrg";
 import { useOrgMembers } from "../useSettings";
-import useSetting from "../useSetting";
+import { useUpdateOrganization, useDeleteOrganization } from "../useSettingMutations";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Building2, Calendar, Users, AlertTriangle, Trash2, Check, Loader2, Pencil, ShieldAlert } from "lucide-react";
@@ -11,7 +11,8 @@ import { formatDateTime } from "@/lib/utils";
 
 export default function OrganizationTab() {
   const { activeOrg, activeOrgId } = useOrg();
-  const { updateOrgApi, isUpdatingOrg, deleteOrgApi, isDeletingOrg } = useSetting();
+  const { mutateAsync: updateOrgApi, isPending: isUpdatingOrg } = useUpdateOrganization();
+  const { mutateAsync: deleteOrgApi, isPending: isDeletingOrg } = useDeleteOrganization();
   const { data: members = [] } = useOrgMembers(activeOrgId);
   
   const [orgName, setOrgName] = useState(activeOrg?.name ?? "");

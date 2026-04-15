@@ -14,7 +14,7 @@ import { useSidebar } from "@/components/ui/sidebar";
 import { useConfirm } from "@/Contexts/ConfirmModalContext";
 import { useViewModal } from "@/Contexts/ViewModalContext";
 import AssetDetailView from "@/Features/assets/AssetDetailView";
-import useAsset from "@/Features/assets/useAsset";
+import { useDeleteAsset } from "@/Features/assets/useAssetMutations";
 import { useAssetFormModals } from "@/Features/assets/useAssetFormModals";
 import { toast } from "sonner";
 
@@ -31,7 +31,7 @@ function AssetRowActions({ asset }: AssetRowActionsProps) {
   const { isMobile } = useSidebar();
   const { confirm } = useConfirm();
   const { view } = useViewModal();
-  const { deleteAssetApi: deleteAsset } = useAsset();
+  const { mutateAsync: deleteAsset } = useDeleteAsset();
   const { openEditAsset } = useAssetFormModals();
 
   function handleShowMore() {

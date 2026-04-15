@@ -5,7 +5,7 @@ import { useForm, UseFormReturn, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ScheduleFormSchema, type ScheduleFormValues } from "./ScheduleFormSchema";
 import { useAssetsForSchedules } from "./useSchedules";
-import useSchedule from "./useSchedule";
+import { useCreateSchedule, useUpdateSchedule } from "./useScheduleMutations";
 import { useViewModal } from "@/Contexts/ViewModalContext";
 import type { ScanSchedule, Asset } from "@/types";
 
@@ -30,7 +30,8 @@ export function ScheduleFormProvider({
 }) {
   const { close } = useViewModal();
   const { assets = [] } = useAssetsForSchedules();
-  const { addScheduleApi, isAdding, updateScheduleApi, isUpdating } = useSchedule();
+  const { mutateAsync: addScheduleApi, isPending: isAdding } = useCreateSchedule();
+  const { mutateAsync: updateScheduleApi, isPending: isUpdating } = useUpdateSchedule(schedule?.id);
   const editMode = !!schedule;
 
   const form = useForm<ScheduleFormValues>({

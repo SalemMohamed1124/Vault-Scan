@@ -1,9 +1,8 @@
 "use client";
 
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { toast } from "sonner";
+import { useQuery } from "@tanstack/react-query";
 import type { ScanFinding, PaginatedResponse, Severity } from "@/types";
-import { fetchFindings, deleteFinding, deleteFindings } from "@/Services/Findings";
+import { fetchFindings } from "@/Services/Findings";
 
 export interface FindingsResponse extends PaginatedResponse<ScanFinding & { 
   scan?: { 
@@ -27,30 +26,6 @@ export function useFindings(params: {
     queryKey: ["findings", params],
     queryFn: () => fetchFindings(params),
   });
-}
-
-export function useDeleteFindings() {
-  const queryClient = useQueryClient();
-
-  const deleteOne = useMutation({
-    mutationFn: deleteFinding,
-    onSuccess: () => {
-      toast.success("Finding deleted successfully");
-      queryClient.invalidateQueries({ queryKey: ["findings"] });
-    },
-    onError: () => toast.error("Failed to delete finding"),
-  });
-
-  const deleteMany = useMutation({
-    mutationFn: deleteFindings,
-    onSuccess: () => {
-      toast.success("Batch deletion completed");
-      queryClient.invalidateQueries({ queryKey: ["findings"] });
-    },
-    onError: () => toast.error("Failed to delete findings"),
-  });
-
-  return { deleteOne, deleteMany };
 }
 
 export function useFindingsStats() {

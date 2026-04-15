@@ -20,7 +20,7 @@ import { ScanStatusBadge } from "./ScanStatusBadge";
 import { ScanProgress } from "./ScanProgress";
 import { CancelScanButton } from "./CancelScanButton";
 import type { Scan, ScanStatus } from "@/types";
-import { useState } from "react";
+
 import { Spinner } from "@/components/ui/spinner";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
