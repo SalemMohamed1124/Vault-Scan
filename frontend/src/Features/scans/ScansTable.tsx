@@ -8,13 +8,13 @@ import { useRouter } from "next/navigation";
 
 export default function ScansTable() {
   const router = useRouter();
-  const { scans, isPending } = useScans({ limit: 10000 });
+  const { items, isPending } = useScans({ limit: 10000 });
 
   return (
     <DataTable
       tableName="Scans"
       columns={ScanColumns}
-      data={scans?.data || []}
+      data={items}
       isPending={isPending}
       extraActions={<ScanTableActions />}
       onRowClick={(scan) => router.push(`/scans/${scan.id}`)}

@@ -13,7 +13,7 @@ interface RawOutputSectionProps {
 export function RawOutputSection({ scanId }: RawOutputSectionProps) {
   const [copied, setCopied] = useState(false);
 
-  const { data: rawOutput, isLoading } = useScanRawOutput(scanId);
+  const { content: rawOutput, isPending } = useScanRawOutput(scanId);
 
   const handleCopy = async () => {
     if (!rawOutput) return;
@@ -22,7 +22,7 @@ export function RawOutputSection({ scanId }: RawOutputSectionProps) {
     setTimeout(() => setCopied(false), 2000);
   };
 
-  if (isLoading) {
+  if (isPending) {
     return (
       <div className="space-y-4">
         <Skeleton className="h-8 w-full" />

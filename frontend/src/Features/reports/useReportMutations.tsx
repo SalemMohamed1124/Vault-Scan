@@ -14,7 +14,7 @@ export function useGenerateReport() {
   const queryClient = useQueryClient();
   const pathname = usePathname();
 
-  return useMutation({
+  const mutation = useMutation({
     mutationFn: generateReport,
     onSuccess: () => {
       const isReportsPage = pathname === "/reports";
@@ -33,6 +33,14 @@ export function useGenerateReport() {
       toast.error("Failed to generate report");
     },
   });
+
+  return {
+    mutate: mutation.mutate,
+    mutateAsync: mutation.mutateAsync,
+    isPending: mutation.isPending,
+    isError: mutation.isError,
+    error: mutation.error,
+  };
 }
 
 export function useDownloadReport() {

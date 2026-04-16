@@ -13,50 +13,106 @@ import {
 } from "@/Services/Dashboard";
 
 export function useDashboardStats() {
-  return useQuery({
+  const query = useQuery({
     queryKey: ["dashboard", "stats"],
     queryFn: fetchDashboardStats,
   });
+
+  return {
+    stats: query.data ?? null,
+    isPending: query.isPending,
+    isError: query.isError,
+    error: query.error,
+    refetch: query.refetch,
+  };
 }
 
 export function useSecurityScore() {
-  return useQuery({
+  const query = useQuery({
     queryKey: ["dashboard", "security-score"],
     queryFn: fetchSecurityScore,
   });
+
+  return {
+    score: query.data ?? null,
+    isPending: query.isPending,
+    isError: query.isError,
+    error: query.error,
+    refetch: query.refetch,
+  };
 }
 
 export function useVulnTrends() {
-  return useQuery({
+  const query = useQuery({
     queryKey: ["dashboard", "vuln-trends"],
     queryFn: fetchVulnTrends,
   });
+
+  return {
+    trends: query.data ?? null,
+    isPending: query.isPending,
+    isError: query.isError,
+    error: query.error,
+    refetch: query.refetch,
+  };
 }
 
 export function useScanActivity() {
-  return useQuery({
+  const query = useQuery({
     queryKey: ["dashboard", "scan-activity"],
     queryFn: fetchScanActivity,
   });
+
+  return {
+    activity: query.data ?? null,
+    isPending: query.isPending,
+    isError: query.isError,
+    error: query.error,
+    refetch: query.refetch,
+  };
 }
 
 export function useTopVulns() {
-  return useQuery({
+  const query = useQuery({
     queryKey: ["dashboard", "top-vulns"],
     queryFn: fetchTopVulns,
   });
+
+  return {
+    vulns: query.data ?? null,
+    isPending: query.isPending,
+    isError: query.isError,
+    error: query.error,
+    refetch: query.refetch,
+  };
 }
 
 export function useRecentActivity() {
-  return useQuery({
+  const query = useQuery({
     queryKey: ["dashboard", "recent-activity"],
     queryFn: fetchRecentActivity,
   });
+
+  return {
+    activity: query.data ?? null,
+    isPending: query.isPending,
+    isError: query.isError,
+    error: query.error,
+    refetch: query.refetch,
+  };
 }
 
 export function useRecentScans() {
-  return useQuery({
+  const query = useQuery({
     queryKey: ["dashboard", "recent-scans"],
     queryFn: fetchRecentScans,
   });
+
+  return {
+    scans: query.data ?? null,
+    isPending: query.isPending,
+    isError: query.isError,
+    error: query.error,
+    refetch: query.refetch,
+  };
 }

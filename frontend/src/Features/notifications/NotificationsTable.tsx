@@ -12,7 +12,7 @@ import type { Notification } from "@/types";
 
 export default function NotificationsTable() {
   const router = useRouter();
-  const { notifications, isPending, error } = useNotifications();
+  const { items: notifications, isPending, error, isError } = useNotifications();
   const { mutate: markReadApi } = useMarkAsRead();
 
   function handleRowClick(notification: Notification) {
@@ -31,7 +31,7 @@ export default function NotificationsTable() {
         columns={NotificationColumns}
         data={notifications}
         isPending={isPending}
-        error={error}
+        error={isError ? error : undefined}
         onRowClick={handleRowClick}
         cardsLayout={true}
         disablePagination={true}

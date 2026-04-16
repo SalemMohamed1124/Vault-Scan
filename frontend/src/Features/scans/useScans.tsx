@@ -18,55 +18,86 @@ export function useScans(params: {
   status?: ScanStatus | "ALL";
   search?: string;
 }) {
-  const {
-    data: scans,
-    isPending,
-    error,
-  } = useQuery({
+  const query = useQuery({
     queryKey: ["scans", params],
     queryFn: () => fetchScans(params),
-    refetchInterval: (query) => {
+    refetchInterval: (queryState) => {
       // If any scan is still running, refetch more frequently
-      const hasRunning = query.state.data?.data?.some(s => s.status === "RUNNING");
+      const hasRunning = queryState.state.data?.data?.some(s => s.status === "RUNNING");
       return hasRunning ? 5000 : 30000;
     }
   });
 
-  return { scans, isPending, error };
+  const items = query.data?.data ?? [];
+  const total = query.data?.total ?? 0;
+  const isEmpty = !query.isPending && !query.isError && items.length === 0;
+
+  return {
+    items,
+    total,
+    isPending: query.isPending,
+    isError: query.isError,
+    error: query.error,
+    isEmpty,
+    refetch: query.refetch,
+  };
 }
 
 export function useScansStats() {
-  const { scans, isPending } = useScans({ limit: 100 });
+  const { items, isPending } = useScans({ limit: 100 });
   
   const stats = useMemo(() => {
-    if (!scans?.data) return { total: 0, runningNow: 0, completedToday: 0, avgDuration: "--" };
-    return calculateScanStats(scans.data, scans.total);
-  }, [scans]);
+    if (!items || items.length === 0) return { total: 0, runningNow: 0, completedToday: 0, avgDuration: "--" };
+    return calculateScanStats(items, items.length);
+  }, [items]);
 
-  return { data: stats, isPending };
+  return {
+    stats,
+    isPending,
+  };
 }
 
 export function useScan(id: string) {
-  return useQuery<Scan | null>({
+  const query = useQuery<Scan | null>({
     queryKey: ["scan", id],
     queryFn: () => fetchScan(id),
     enabled: !!id,
-    refetchInterval: (data) => {
-      return data?.state?.data?.status === "RUNNING" ? 3000 : false;
+    refetchInterval: (queryState) => {
+      return queryState?.state?.data?.status === "RUNNING" ? 3000 : false;
     },
   });
+
+  return {
+    scan: query.data ?? null,
+    isPending: query.isPending,
+    isError: query.isError,
+    error: query.error,
+    refetch: query.refetch,
+  };
 }
 
 export function useScanFindings(id: string) {
-  return useQuery<ScanFinding[]>({
+  const query = useQuery<ScanFinding[]>({
     queryKey: ["scan-findings", id],
     queryFn: () => fetchScanFindings(id),
     enabled: !!id,
   });
+
+  const items = query.data ?? [];
+  const isEmpty = !query.isPending && !query.isError && items.length === 0;
+
+  return {
+    items,
+    isPending: query.isPending,
+    isError: query.isError,
+    error: query.error,
+    isEmpty,
+    refetch: query.refetch,
+  };
 }
 
 export function useScanRawOutput(id: string) {
-  return useQuery<string>({
+  const query = useQuery<string>({
     queryKey: ["scan-raw", id],
     queryFn: async () => {
       try {
@@ -79,4 +110,12 @@ export function useScanRawOutput(id: string) {
     },
     enabled: !!id,
   });
+
+  return {
+    content: query.data ?? "",
+    isPending: query.isPending,
+    isError: query.isError,
+    error: query.error,
+    refetch: query.refetch,
+  };
 }

@@ -27,7 +27,7 @@ export function ReportFormProvider({
   children: ReactNode;
 }) {
   const { close } = useViewModal();
-  const { scans = [], isPending: scansLoading } = useCompletedScansForReports();
+  const { items: scans = [], isPending: scansLoading } = useCompletedScansForReports();
   const { mutateAsync: generateReportApi, isPending: isGenerating } = useGenerateReport();
   
   const form = useForm<ReportFormValues>({

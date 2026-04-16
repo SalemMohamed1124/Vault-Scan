@@ -28,7 +28,7 @@ export function AIAnalysisCard({ scanId }: AIAnalysisCardProps) {
   const [expandedSections, setExpandedSections] = useState<Set<string>>(
     new Set(["summary", "recommendations"]),
   );
-  const { data: analysis, isLoading } = useAiAnalysis(scanId);
+  const { analysis, isPending } = useAiAnalysis(scanId);
   const { mutate: retryAnalysis, isPending: isRetrying } = useRetryAiAnalysis(scanId);
 
   function toggleSection(section: string) {
@@ -43,7 +43,7 @@ export function AIAnalysisCard({ scanId }: AIAnalysisCardProps) {
   const isExpanded = (section: string) => expandedSections.has(section);
 
   // Loading state
-  if (isLoading) {
+  if (isPending) {
     return (
       <div className="space-y-4">
         <Skeleton className="h-40 w-full" />

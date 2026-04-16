@@ -13,7 +13,7 @@ import { RemediationGuide } from "./useAI";
 export function useRetryAiAnalysis(scanId: string) {
   const queryClient = useQueryClient();
 
-  return useMutation({
+  const mutation = useMutation({
     mutationFn: () => retryAIAnalysis(scanId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["ai-analysis", scanId] });
@@ -23,18 +23,42 @@ export function useRetryAiAnalysis(scanId: string) {
       toast.error("Failed to retry AI analysis");
     }
   });
+
+  return {
+    mutate: mutation.mutate,
+    mutateAsync: mutation.mutateAsync,
+    isPending: mutation.isPending,
+    isError: mutation.isError,
+    error: mutation.error,
+  };
 }
 
 export function useAiChat() {
-  return useMutation({
+  const mutation = useMutation({
     mutationFn: ({ message, history, scanId }: { message: string, history: ChatMessage[], scanId?: string }) => 
       sendAIChatMessage(message, history, scanId)
   });
+
+  return {
+    mutate: mutation.mutate,
+    mutateAsync: mutation.mutateAsync,
+    isPending: mutation.isPending,
+    isError: mutation.isError,
+    error: mutation.error,
+  };
 }
 
 export function useAiRemediation(findingId: string) {
-  return useMutation<RemediationGuide, Error, void>({
+  const mutation = useMutation<RemediationGuide, Error, void>({
     mutationFn: () => fetchAIRemediation(findingId),
     onError: () => toast.error("Failed to generate remediation guide"),
   });
+
+  return {
+    mutate: mutation.mutate,
+    mutateAsync: mutation.mutateAsync,
+    isPending: mutation.isPending,
+    isError: mutation.isError,
+    error: mutation.error,
+  };
 }

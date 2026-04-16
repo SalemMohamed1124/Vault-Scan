@@ -8,7 +8,7 @@ import InviteMemberModal from "./InviteMemberModal";
 
 export default function MembersTab() {
   const { activeOrgId } = useOrg();
-  const { data: members = [], isLoading, error } = useOrgMembers(activeOrgId);
+  const { items: members = [], isPending, isError, error } = useOrgMembers(activeOrgId);
 
   return (
     <div className="max-w-4xl space-y-6">
@@ -25,8 +25,8 @@ export default function MembersTab() {
         tableName="MembersTable"
         columns={MemberColumns}
         data={members}
-        isPending={isLoading}
-        error={error}
+        isPending={isPending}
+        error={isError ? error : undefined}
         cardsLayout={true}
         disablePagination={members.length < 10}
         toolbar={{

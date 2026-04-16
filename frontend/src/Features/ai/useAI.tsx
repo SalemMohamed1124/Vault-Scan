@@ -40,22 +40,38 @@ export interface InsightsData {
 }
 
 export function useAiAnalysis(scanId: string) {
-  return useQuery<AiAnalysis | null>({
+  const query = useQuery<AiAnalysis | null>({
     queryKey: ["ai-analysis", scanId],
     queryFn: () => fetchAIAnalysis(scanId).catch(() => null),
-    refetchInterval: (query) => {
-      const d = query.state.data;
+    refetchInterval: (queryState) => {
+      const d = queryState.state.data;
       if (d && d.status === "PROCESSING") return 3000;
       return false;
     },
   });
+
+  return {
+    analysis: query.data ?? null,
+    isPending: query.isPending,
+    isError: query.isError,
+    error: query.error,
+    refetch: query.refetch,
+  };
 }
 
 export function useAiInsights() {
-  return useQuery<InsightsData>({
+  const query = useQuery<InsightsData>({
     queryKey: ["ai-insights"],
     queryFn: fetchAIInsights,
     staleTime: 5 * 60 * 1000,
     retry: 1,
   });
+
+  return {
+    insights: query.data ?? null,
+    isPending: query.isPending,
+    isError: query.isError,
+    error: query.error,
+    refetch: query.refetch,
+  };
 }

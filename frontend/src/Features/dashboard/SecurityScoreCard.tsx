@@ -7,9 +7,9 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { SeverityBadge } from "@/components/layout/SeverityBadge";
 
 export default function SecurityScoreCard() {
-  const { data, isLoading } = useSecurityScore();
+  const { score, isPending } = useSecurityScore();
 
-  if (isLoading) {
+  if (isPending) {
     return (
       <div className="glass-card p-5 h-full animate-pulse">
         <div className="flex flex-col gap-4">
@@ -26,7 +26,7 @@ export default function SecurityScoreCard() {
     );
   }
 
-  const s = data || { score: 0, grade: "F", previousScore: 0, trend: "stable" };
+  const s = score || { score: 0, grade: "F", previousScore: 0, trend: "stable" };
   const diff = s.score - s.previousScore;
 
   const config = {

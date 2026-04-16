@@ -13,7 +13,7 @@ export default function OrganizationTab() {
   const { activeOrg, activeOrgId } = useOrg();
   const { mutateAsync: updateOrgApi, isPending: isUpdatingOrg } = useUpdateOrganization();
   const { mutateAsync: deleteOrgApi, isPending: isDeletingOrg } = useDeleteOrganization();
-  const { data: members = [] } = useOrgMembers(activeOrgId);
+  const { items: members = [] } = useOrgMembers(activeOrgId);
   
   const [orgName, setOrgName] = useState(activeOrg?.name ?? "");
   const [isEditing, setIsEditing] = useState(false);

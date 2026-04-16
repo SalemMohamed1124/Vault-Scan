@@ -19,9 +19,9 @@ const tooltipStyle = {
 };
 
 export default function ScanActivityChart() {
-  const { data: activity, isLoading } = useScanActivity();
+  const { activity, isPending } = useScanActivity();
 
-  if (isLoading) {
+  if (isPending) {
     return (
       <div className="glass-card p-5 flex flex-col gap-5 h-[345px] animate-pulse">
         <div className="flex items-center gap-2">

@@ -5,14 +5,13 @@ import { Summary } from "@/components/layout/Summary";
 import { FileText, FileCheck, Clock, Archive } from "lucide-react";
 
 export default function ReportSummary() {
-  const { reports, isPending } = useReports();
+  const { items, isPending } = useReports();
 
   // Calculate stats from the flat list (since backend doesn't provide them)
-  const data = reports?.data || [];
-  const total = data.length;
-  const active = data.filter((r) => new Date(r.expiresAt) > new Date()).length;
+  const total = items.length;
+  const active = items.filter((r) => new Date(r.expiresAt) > new Date()).length;
   const expired = total - active;
-  const latestFormat = data[0]?.format || "None";
+  const latestFormat = items[0]?.format || "None";
 
   return (
     <Summary data={[]}>

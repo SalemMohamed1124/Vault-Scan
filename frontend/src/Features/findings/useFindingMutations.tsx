@@ -7,7 +7,7 @@ import { deleteFinding, deleteFindings } from "@/Services/Findings";
 export function useDeleteFinding() {
   const queryClient = useQueryClient();
 
-  return useMutation({
+  const mutation = useMutation({
     mutationFn: deleteFinding,
     onSuccess: () => {
       toast.success("Finding deleted successfully");
@@ -15,12 +15,20 @@ export function useDeleteFinding() {
     },
     onError: () => toast.error("Failed to delete finding"),
   });
+
+  return {
+    mutate: mutation.mutate,
+    mutateAsync: mutation.mutateAsync,
+    isPending: mutation.isPending,
+    isError: mutation.isError,
+    error: mutation.error,
+  };
 }
 
 export function useDeleteManyFindings() {
   const queryClient = useQueryClient();
 
-  return useMutation({
+  const mutation = useMutation({
     mutationFn: deleteFindings,
     onSuccess: () => {
       toast.success("Batch deletion completed");
@@ -28,4 +36,12 @@ export function useDeleteManyFindings() {
     },
     onError: () => toast.error("Failed to delete findings"),
   });
+
+  return {
+    mutate: mutation.mutate,
+    mutateAsync: mutation.mutateAsync,
+    isPending: mutation.isPending,
+    isError: mutation.isError,
+    error: mutation.error,
+  };
 }

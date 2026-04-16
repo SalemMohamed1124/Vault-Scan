@@ -20,7 +20,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 export default function RecentScansTable() {
   const router = useRouter();
-  const { data: scans, isLoading } = useRecentScans();
+  const { scans, isPending } = useRecentScans();
 
   return (
     <Card className="glass-card shadow-none overflow-hidden h-full flex flex-col">
@@ -54,7 +54,7 @@ export default function RecentScansTable() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {isLoading ? (
+            {isPending ? (
               Array.from({ length: 5 }).map((_, i) => (
                 <TableRow key={i} className="border-border/10">
                   <TableCell colSpan={4} className="p-4">

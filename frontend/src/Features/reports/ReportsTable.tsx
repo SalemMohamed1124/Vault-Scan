@@ -6,13 +6,13 @@ import { DataTable } from "@/components/dataTable/DataTable";
 import { ReportTableActions } from "./useReportFormModals";
 
 export default function ReportsTable() {
-  const { reports, isPending } = useReports();
+  const { items, isPending } = useReports();
 
   return (
     <DataTable
       tableName="ReportsTable"
       columns={ReportColumns}
-      data={reports?.data || []}
+      data={items}
       isPending={isPending}
       toolbar={{ export: false, search: true, filter: true }}
       extraActions={

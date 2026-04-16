@@ -7,7 +7,7 @@ import { useFindingsStats } from "./useFindings";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export default function FindingsSummary() {
-  const { data: stats, isPending } = useFindingsStats();
+  const { severityCounts: stats, isPending } = useFindingsStats();
 
   if (isPending) {
     return (
@@ -19,7 +19,7 @@ export default function FindingsSummary() {
     );
   }
 
-  const counts = stats?.severityCounts || {
+  const counts = stats || {
     CRITICAL: 0,
     HIGH: 0,
     MEDIUM: 0,

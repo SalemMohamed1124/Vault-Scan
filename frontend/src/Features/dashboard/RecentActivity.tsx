@@ -14,9 +14,9 @@ const typeConfig: Record<string, { icon: LucideIcon; color: string; bg: string }
 const DEFAULT_CONFIG = { icon: Activity, color: "text-primary", bg: "bg-primary/10" };
 
 export default function RecentActivity() {
-  const { data: activity, isLoading } = useRecentActivity();
+  const { activity, isPending } = useRecentActivity();
 
-  if (isLoading) {
+  if (isPending) {
     return (
       <div className="glass-card p-5 flex flex-col gap-6 h-[420px] animate-pulse">
         <div className="flex items-center gap-2">

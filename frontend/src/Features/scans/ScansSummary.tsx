@@ -7,7 +7,7 @@ import { useScansStats } from "./useScans";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export default function ScansSummary() {
-  const { data: stats, isPending } = useScansStats();
+  const { stats, isPending } = useScansStats();
 
   if (isPending) {
     return (

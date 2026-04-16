@@ -18,19 +18,19 @@ interface ScanFormContextProps extends UseFormReturn<ScanFormValues> {
 
 const ScanFormContext = createContext<ScanFormContextProps | null>(null);
 
-export function ScanFormProvider({ 
+export function ScanFormProvider({
   onClose,
-  children 
-}: { 
+  children,
+}: {
   onClose?: () => void;
   children: ReactNode;
 }) {
   const { close: modalClose } = useViewModal();
   const { mutateAsync: startScanApi, isPending: isStarting } = useCreateScan();
   const router = useRouter();
-  const { assets: assetsData } = useAssets();
-  
-  const assets = useMemo(() => assetsData?.data || [], [assetsData]);
+  const { items } = useAssets();
+
+  const assets = useMemo(() => items || [], [items]);
 
   const form = useForm<ScanFormValues>({
     resolver: zodResolver(ScanFormSchema),
@@ -51,9 +51,15 @@ export function ScanFormProvider({
       type: values.type,
     };
 
-    if (values.authMode === "credentials" && values.username && values.password) {
+    if (
+      values.authMode === "credentials" &&
+      values.username &&
+      values.password
+    ) {
       const credHeader = `X-VaultScan-Username:${values.username};;X-VaultScan-Password:${values.password}`;
-      payload.customHeaders = values.loginUrl ? `${credHeader};;X-VaultScan-LoginURL:${values.loginUrl}` : credHeader;
+      payload.customHeaders = values.loginUrl
+        ? `${credHeader};;X-VaultScan-LoginURL:${values.loginUrl}`
+        : credHeader;
     }
 
     if (values.authMode === "cookies" && values.cookies?.trim()) {
@@ -89,9 +95,7 @@ export function ScanFormProvider({
 
   return (
     <ScanFormContext.Provider value={value}>
-      <FormProvider {...form}>
-        {children}
-      </FormProvider>
+      <FormProvider {...form}>{children}</FormProvider>
     </ScanFormContext.Provider>
   );
 }

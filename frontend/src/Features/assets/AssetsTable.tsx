@@ -8,13 +8,13 @@ import { Button } from "@/components/ui/button";
 import { Plus, Upload } from "lucide-react";
 
 export default function AssetsTable() {
-  const { assets, isPending } = useAssets();
+  const { items, isPending } = useAssets();
 
   return (
     <DataTable
       tableName="AssetsTable"
       columns={AssetColumns}
-      data={assets?.data || []}
+      data={items}
       isPending={isPending}
       extraActions={<AssetTableActions />}
     />

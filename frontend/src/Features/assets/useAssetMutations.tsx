@@ -16,7 +16,7 @@ import type { AxiosError } from "axios";
 export function useDeleteAsset() {
   const queryClient = useQueryClient();
 
-  return useMutation({
+  const mutation = useMutation({
     mutationFn: deleteAsset,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["assets"] });
@@ -26,13 +26,21 @@ export function useDeleteAsset() {
       toast.error(`Failed to delete asset`, { position: "top-center" });
     },
   });
+
+  return {
+    mutate: mutation.mutate,
+    mutateAsync: mutation.mutateAsync,
+    isPending: mutation.isPending,
+    isError: mutation.isError,
+    error: mutation.error,
+  };
 }
 
 export function useCreateAsset() {
   const queryClient = useQueryClient();
   const pathname = usePathname();
 
-  return useMutation({
+  const mutation = useMutation({
     mutationFn: createAsset,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["assets"] });
@@ -50,12 +58,20 @@ export function useCreateAsset() {
       toast.error("Failed to add new asset", { position: "top-center" });
     },
   });
+
+  return {
+    mutate: mutation.mutate,
+    mutateAsync: mutation.mutateAsync,
+    isPending: mutation.isPending,
+    isError: mutation.isError,
+    error: mutation.error,
+  };
 }
 
 export function useUpdateAsset(id?: string) {
   const queryClient = useQueryClient();
 
-  return useMutation({
+  const mutation = useMutation({
     mutationFn: ({ id, updatedAsset }: { id: string; updatedAsset: Partial<Asset> }) => 
       updateAsset(id, updatedAsset),
     onSuccess: () => {
@@ -67,13 +83,21 @@ export function useUpdateAsset(id?: string) {
       toast.error("Failed to update asset", { position: "top-center" });
     },
   });
+
+  return {
+    mutate: mutation.mutate,
+    mutateAsync: mutation.mutateAsync,
+    isPending: mutation.isPending,
+    isError: mutation.isError,
+    error: mutation.error,
+  };
 }
 
 export function useBulkCreateAssets() {
   const queryClient = useQueryClient();
   const pathname = usePathname();
 
-  return useMutation({
+  const mutation = useMutation({
     mutationFn: bulkCreateAssets,
     onSuccess: (data: { created: Asset[]; skipped: any[] }) => {
       const { created, skipped } = data;
@@ -97,4 +121,12 @@ export function useBulkCreateAssets() {
       toast.error(error.response?.data?.message || "Failed to bulk register assets");
     },
   });
+
+  return {
+    mutate: mutation.mutate,
+    mutateAsync: mutation.mutateAsync,
+    isPending: mutation.isPending,
+    isError: mutation.isError,
+    error: mutation.error,
+  };
 }

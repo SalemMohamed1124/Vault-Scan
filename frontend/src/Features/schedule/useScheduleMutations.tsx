@@ -15,7 +15,7 @@ export function useCreateSchedule() {
   const queryClient = useQueryClient();
   const pathname = usePathname();
 
-  return useMutation({
+  const mutation = useMutation({
     mutationFn: createSchedule,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["schedules"] });
@@ -32,12 +32,20 @@ export function useCreateSchedule() {
       toast.error("Failed to create schedule");
     },
   });
+
+  return {
+    mutate: mutation.mutate,
+    mutateAsync: mutation.mutateAsync,
+    isPending: mutation.isPending,
+    isError: mutation.isError,
+    error: mutation.error,
+  };
 }
 
 export function useUpdateSchedule(id?: string) {
   const queryClient = useQueryClient();
 
-  return useMutation({
+  const mutation = useMutation({
     mutationFn: ({ id, data }: { id: string; data: Partial<ScanSchedule> }) => 
       updateSchedule(id, data),
     onSuccess: () => {
@@ -49,12 +57,20 @@ export function useUpdateSchedule(id?: string) {
       toast.error("Failed to update schedule");
     },
   });
+
+  return {
+    mutate: mutation.mutate,
+    mutateAsync: mutation.mutateAsync,
+    isPending: mutation.isPending,
+    isError: mutation.isError,
+    error: mutation.error,
+  };
 }
 
 export function useDeleteSchedule() {
   const queryClient = useQueryClient();
 
-  return useMutation({
+  const mutation = useMutation({
     mutationFn: deleteSchedule,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["schedules"] });
@@ -64,4 +80,12 @@ export function useDeleteSchedule() {
       toast.error("Failed to delete schedule");
     },
   });
+
+  return {
+    mutate: mutation.mutate,
+    mutateAsync: mutation.mutateAsync,
+    isPending: mutation.isPending,
+    isError: mutation.isError,
+    error: mutation.error,
+  };
 }

@@ -18,7 +18,7 @@ import {
 export function useUpdateProfile() {
   const queryClient = useQueryClient();
 
-  return useMutation({
+  const mutation = useMutation({
     mutationFn: async ({ name }: { name: string; user: User }) =>
       updateProfileApiReq(name),
     onSuccess: (data, { user }) => {
@@ -29,20 +29,36 @@ export function useUpdateProfile() {
     },
     onError: () => toast.error("Failed to update profile"),
   });
+
+  return {
+    mutate: mutation.mutate,
+    mutateAsync: mutation.mutateAsync,
+    isPending: mutation.isPending,
+    isError: mutation.isError,
+    error: mutation.error,
+  };
 }
 
 export function useChangePassword() {
-  return useMutation({
+  const mutation = useMutation({
     mutationFn: changePasswordApiReq,
     onSuccess: () => toast.success("Password changed successfully"),
     onError: () => toast.error("Failed to update password"),
   });
+
+  return {
+    mutate: mutation.mutate,
+    mutateAsync: mutation.mutateAsync,
+    isPending: mutation.isPending,
+    isError: mutation.isError,
+    error: mutation.error,
+  };
 }
 
 export function useUpdateOrganization() {
   const queryClient = useQueryClient();
 
-  return useMutation({
+  const mutation = useMutation({
     mutationFn: ({ orgId, name }: { orgId: string; name: string }) =>
       updateOrgApiReq(orgId, name),
     onSuccess: (_, { orgId, name }) => {
@@ -59,10 +75,18 @@ export function useUpdateOrganization() {
     },
     onError: () => toast.error("Failed to update organization"),
   });
+
+  return {
+    mutate: mutation.mutate,
+    mutateAsync: mutation.mutateAsync,
+    isPending: mutation.isPending,
+    isError: mutation.isError,
+    error: mutation.error,
+  };
 }
 
 export function useDeleteOrganization() {
-  return useMutation({
+  const mutation = useMutation({
     mutationFn: deleteOrgApiReq,
     onSuccess: (_, orgId) => {
       toast.success("Organization deleted");
@@ -74,12 +98,20 @@ export function useDeleteOrganization() {
     },
     onError: () => toast.error("Failed to delete organization"),
   });
+
+  return {
+    mutate: mutation.mutate,
+    mutateAsync: mutation.mutateAsync,
+    isPending: mutation.isPending,
+    isError: mutation.isError,
+    error: mutation.error,
+  };
 }
 
 export function useUpdateMemberRole() {
   const queryClient = useQueryClient();
 
-  return useMutation({
+  const mutation = useMutation({
     mutationFn: ({
       orgId,
       memberId,
@@ -95,12 +127,20 @@ export function useUpdateMemberRole() {
     },
     onError: () => toast.error("Failed to update role"),
   });
+
+  return {
+    mutate: mutation.mutate,
+    mutateAsync: mutation.mutateAsync,
+    isPending: mutation.isPending,
+    isError: mutation.isError,
+    error: mutation.error,
+  };
 }
 
 export function useRemoveMember() {
   const queryClient = useQueryClient();
 
-  return useMutation({
+  const mutation = useMutation({
     mutationFn: ({ orgId, memberId }: { orgId: string; memberId: string }) =>
       removeMemberApiReq(orgId, memberId),
     onSuccess: (_, { orgId }) => {
@@ -109,12 +149,20 @@ export function useRemoveMember() {
     },
     onError: () => toast.error("Failed to remove member"),
   });
+
+  return {
+    mutate: mutation.mutate,
+    mutateAsync: mutation.mutateAsync,
+    isPending: mutation.isPending,
+    isError: mutation.isError,
+    error: mutation.error,
+  };
 }
 
 export function useInviteMember() {
   const queryClient = useQueryClient();
 
-  return useMutation({
+  const mutation = useMutation({
     mutationFn: ({
       orgId,
       payload,
@@ -128,4 +176,12 @@ export function useInviteMember() {
     },
     onError: () => toast.error("Failed to invite member"),
   });
+
+  return {
+    mutate: mutation.mutate,
+    mutateAsync: mutation.mutateAsync,
+    isPending: mutation.isPending,
+    isError: mutation.isError,
+    error: mutation.error,
+  };
 }

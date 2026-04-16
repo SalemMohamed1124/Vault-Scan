@@ -5,15 +5,22 @@ import type { Notification } from "@/types";
 import { fetchNotifications } from "@/Services/Notifications";
 
 export function useNotifications() {
-  const {
-    data: notifications = [],
-    isPending,
-    error,
-  } = useQuery<Notification[], Error>({
+  const query = useQuery<Notification[], Error>({
     queryKey: ["notifications-list"],
     queryFn: fetchNotifications,
   });
-  const unreadCount = notifications.filter((n) => !n.isRead).length;
 
-  return { notifications, isPending, error, unreadCount };
+  const items = query.data ?? [];
+  const unreadCount = items.filter((n) => !n.isRead).length;
+  const isEmpty = !query.isPending && !query.isError && items.length === 0;
+
+  return {
+    items,
+    unreadCount,
+    isPending: query.isPending,
+    isError: query.isError,
+    error: query.error,
+    isEmpty,
+    refetch: query.refetch,
+  };
 }

@@ -10,35 +10,53 @@ export function useAssets(params?: {
   page?: number;
   limit?: number;
 }) {
-  const {
-    isPending,
-    data: assets,
-    error,
-  } = useQuery({
+  const query = useQuery({
     queryKey: ["assets", params],
     queryFn: () => fetchAssets(params),
   });
 
-  return { isPending, assets, error };
+  const items = query.data?.data ?? [];
+  const total = query.data?.total ?? 0;
+  const isEmpty = !query.isPending && !query.isError && items.length === 0;
+
+  return {
+    items,
+    total,
+    isPending: query.isPending,
+    isError: query.isError,
+    error: query.error,
+    isEmpty,
+    refetch: query.refetch,
+  };
 }
 
 export function useAssetsStats() {
-  const {
-    isPending,
-    data: stats,
-    error,
-  } = useQuery({
+  const query = useQuery({
     queryKey: ["assets", "stats"],
     queryFn: fetchAssetStats,
   });
 
-  return { isPending, stats, error };
+  return {
+    stats: query.data ?? null,
+    isPending: query.isPending,
+    isError: query.isError,
+    error: query.error,
+    refetch: query.refetch,
+  };
 }
 
 export function useAsset(id: string) {
-  return useQuery({
+  const query = useQuery({
     queryKey: ["asset", id],
     queryFn: () => fetchAsset(id),
     enabled: !!id,
   });
+
+  return {
+    item: query.data ?? null,
+    isPending: query.isPending,
+    isError: query.isError,
+    error: query.error,
+    refetch: query.refetch,
+  };
 }

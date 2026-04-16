@@ -22,19 +22,35 @@ export function useFindings(params: {
   category?: string | "ALL";
   search?: string;
 }) {
-  return useQuery<FindingsResponse>({
+  const query = useQuery<FindingsResponse>({
     queryKey: ["findings", params],
     queryFn: () => fetchFindings(params),
   });
+
+  const items = query.data?.data ?? [];
+  const total = query.data?.total ?? 0;
+  const isEmpty = !query.isPending && !query.isError && items.length === 0;
+  const severityCounts = query.data?.severityCounts ?? { CRITICAL: 0, HIGH: 0, MEDIUM: 0, LOW: 0 };
+  const categoryCounts = query.data?.categoryCounts ?? [];
+
+  return {
+    items,
+    total,
+    severityCounts,
+    categoryCounts,
+    isPending: query.isPending,
+    isError: query.isError,
+    error: query.error,
+    isEmpty,
+    refetch: query.refetch,
+  };
 }
 
 export function useFindingsStats() {
-  const { data } = useFindings({ limit: 1 });
+  const { items, total, isPending, severityCounts } = useFindings({ limit: 1 });
   return {
-    data: data ? {
-      severityCounts: data.severityCounts || { CRITICAL: 0, HIGH: 0, MEDIUM: 0, LOW: 0 },
-      total: data.total
-    } : null,
-    isPending: !data
+    severityCounts,
+    total,
+    isPending,
   };
 }

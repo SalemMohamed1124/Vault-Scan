@@ -25,9 +25,9 @@ const tooltipStyle = {
 };
 
 export default function VulnTrendChart() {
-  const { data: trends, isLoading } = useVulnTrends();
+  const { trends, isPending } = useVulnTrends();
 
-  if (isLoading) {
+  if (isPending) {
     return (
       <div className="glass-card p-5 flex flex-col gap-5 h-[345px] animate-pulse">
         <div className="flex items-center gap-2">

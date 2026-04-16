@@ -7,9 +7,9 @@ import { SeverityBadge } from "@/components/layout/SeverityBadge";
 import { cn } from "@/lib/utils";
 
 export default function TopVulnerabilities() {
-  const { data: vulns, isLoading } = useTopVulns();
+  const { vulns, isPending } = useTopVulns();
 
-  if (isLoading) {
+  if (isPending) {
     return (
       <div className="glass-card p-5 flex flex-col gap-6 h-[420px] animate-pulse">
         <div className="flex items-center gap-2">

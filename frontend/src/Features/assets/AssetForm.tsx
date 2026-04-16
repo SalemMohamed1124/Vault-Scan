@@ -8,7 +8,7 @@ import { Controller } from "react-hook-form";
 import { Spinner } from "@/components/ui/spinner";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import type { Asset } from "@/types";
-import { AssetFormProvider, useAssetForm } from "./AssetFromContext";
+import { AssetFormProvider, useAssetForm } from "./AssetFormContext";
 
 export default function AssetForm({ asset }: { asset?: Asset | null }) {
   return (

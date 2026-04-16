@@ -11,7 +11,7 @@ export function useScanResults(id: string) {
   const queryClient = useQueryClient();
   const router = useRouter();
 
-  const { data: scan, isPending: scanPending, error: scanError } = useScan(id);
+  const { scan, isPending: scanPending, error: scanError } = useScan(id);
 
   // Automatically fetch fresh findings and AI data when a pending scan finishes
   useEffect(() => {
@@ -22,7 +22,7 @@ export function useScanResults(id: string) {
     }
   }, [scan?.status, id, queryClient]);
 
-  const { data: findings = [], isPending: findingsPending } = useScanFindings(id);
+  const { items: findings = [], isPending: findingsPending } = useScanFindings(id);
 
   const generateReport = useGenerateReport();
 

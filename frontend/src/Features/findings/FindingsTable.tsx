@@ -9,7 +9,7 @@ import { SeverityBadge } from "@/components/layout/SeverityBadge";
 import { FindingTableActions } from "./FindingTableActions";
 
 export default function FindingsTable() {
-  const { data, isPending } = useFindings({
+  const { items, isPending } = useFindings({
     limit: 5000,
   });
 
@@ -19,7 +19,7 @@ export default function FindingsTable() {
     <DataTable
       tableName="FindingsTable"
       columns={FindingColumns}
-      data={data?.data || []}
+      data={items}
       isPending={isPending}
       toolbar={{ search: true, filter: true, viewOptions: true, export: true }}
       selectedIds={selectedIds}

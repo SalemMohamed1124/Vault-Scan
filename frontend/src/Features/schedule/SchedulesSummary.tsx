@@ -7,23 +7,23 @@ import { Summary } from "@/components/layout/Summary";
 import { formatDateTime } from "@/lib/utils";
 
 export default function SchedulesSummary() {
-  const { schedules = [] } = useSchedules();
+  const { items } = useSchedules();
 
   const stats = useMemo(() => {
-    const active = schedules.filter((s) => s.isActive).length;
-    const paused = schedules.filter((s) => !s.isActive).length;
-    const activeSchedules = schedules.filter((s) => s.isActive && s.nextRunAt);
+    const active = items.filter((s) => s.isActive).length;
+    const paused = items.filter((s) => !s.isActive).length;
+    const activeSchedules = items.filter((s) => s.isActive && s.nextRunAt);
     const sorted = [...activeSchedules].sort(
       (a, b) =>
         new Date(a.nextRunAt).getTime() - new Date(b.nextRunAt).getTime(),
     );
     const nextRun = sorted[0]?.nextRunAt;
 
-    return { total: schedules.length, active, paused, nextRun };
-  }, [schedules]);
+    return { total: items.length, active, paused, nextRun };
+  }, [items]);
 
   return (
-    <Summary data={schedules as unknown as Record<string, unknown>[]}>
+    <Summary data={items as unknown as Record<string, unknown>[]}>
       <Summary.Card
         label="Total Schedules"
         sublabel="Automated Tasks"

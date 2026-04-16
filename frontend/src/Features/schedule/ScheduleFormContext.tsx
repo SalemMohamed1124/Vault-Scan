@@ -29,7 +29,7 @@ export function ScheduleFormProvider({
   children: ReactNode;
 }) {
   const { close } = useViewModal();
-  const { assets = [] } = useAssetsForSchedules();
+  const { items } = useAssetsForSchedules();
   const { mutateAsync: addScheduleApi, isPending: isAdding } = useCreateSchedule();
   const { mutateAsync: updateScheduleApi, isPending: isUpdating } = useUpdateSchedule(schedule?.id);
   const editMode = !!schedule;
@@ -79,7 +79,7 @@ export function ScheduleFormProvider({
     onSubmit,
     isLoading: isAdding || isUpdating,
     editMode,
-    assets,
+    assets: items,
     close,
   };
 

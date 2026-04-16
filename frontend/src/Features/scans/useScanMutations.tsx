@@ -7,7 +7,7 @@ import { startScan, deleteScan, cancelScan } from "@/Services/Scans";
 export function useCreateScan() {
   const queryClient = useQueryClient();
 
-  return useMutation({
+  const mutation = useMutation({
     mutationFn: startScan,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["scans"] });
@@ -17,12 +17,20 @@ export function useCreateScan() {
       toast.error("Failed to start scan");
     },
   });
+
+  return {
+    mutate: mutation.mutate,
+    mutateAsync: mutation.mutateAsync,
+    isPending: mutation.isPending,
+    isError: mutation.isError,
+    error: mutation.error,
+  };
 }
 
 export function useDeleteScan() {
   const queryClient = useQueryClient();
 
-  return useMutation({
+  const mutation = useMutation({
     mutationFn: deleteScan,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["scans"] });
@@ -32,12 +40,20 @@ export function useDeleteScan() {
       toast.error("Failed to delete scan");
     },
   });
+
+  return {
+    mutate: mutation.mutate,
+    mutateAsync: mutation.mutateAsync,
+    isPending: mutation.isPending,
+    isError: mutation.isError,
+    error: mutation.error,
+  };
 }
 
 export function useCancelScan(scanId: string) {
   const queryClient = useQueryClient();
 
-  return useMutation({
+  const mutation = useMutation({
     mutationFn: () => cancelScan(scanId),
     onSuccess: () => {
       toast.success("Scan cancelled");
@@ -48,4 +64,12 @@ export function useCancelScan(scanId: string) {
       toast.error("Failed to cancel scan");
     },
   });
+
+  return {
+    mutate: mutation.mutate,
+    mutateAsync: mutation.mutateAsync,
+    isPending: mutation.isPending,
+    isError: mutation.isError,
+    error: mutation.error,
+  };
 }

@@ -8,16 +8,16 @@ import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 
 export default function SchedulesTable() {
-  const { isPending, schedules = [], error } = useSchedules();
+  const { isPending, items, error, isError } = useSchedules();
   const { openNew } = useScheduleFormModals();
 
   return (
     <DataTable
       columns={ScheduleColumns as any}
-      data={schedules}
+      data={items}
       isPending={isPending}
       tableName="SchedulesTable"
-      error={error as Error}
+      error={isError ? (error as Error) : undefined}
       extraActions={
         <Button onClick={() => openNew()} variant="primary">
           <Plus className="size-4 mr-2" />
