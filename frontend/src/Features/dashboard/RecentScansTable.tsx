@@ -4,13 +4,13 @@ import { useRecentScans } from "./useDashboardData";
 import { Radar, ArrowRight, Play } from "lucide-react";
 import Link from "next/link";
 import { Card } from "@/components/ui/card";
-import { 
-  Table, 
-  TableBody, 
-  TableCell, 
-  TableHead, 
-  TableHeader, 
-  TableRow 
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
 } from "@/components/ui/table";
 import { useRouter } from "next/navigation";
 import { SCAN_STATUS_CONFIG } from "@/Features/scans/scan-status-config";
@@ -47,10 +47,18 @@ export default function RecentScansTable() {
         <Table>
           <TableHeader>
             <TableRow className="hover:bg-transparent border-border/10">
-              <TableHead className="text-[10px] uppercase font-black tracking-widest h-10 px-6">Asset</TableHead>
-              <TableHead className="text-[10px] uppercase font-black tracking-widest h-10">Status</TableHead>
-              <TableHead className="text-[10px] uppercase font-black tracking-widest h-10 hidden sm:table-cell">Findings</TableHead>
-              <TableHead className="text-[10px] uppercase font-black tracking-widest h-10 text-right px-6 hidden md:table-cell">Started</TableHead>
+              <TableHead className="text-[10px] uppercase font-black tracking-widest h-10 px-6">
+                Asset
+              </TableHead>
+              <TableHead className="text-[10px] uppercase font-black tracking-widest h-10">
+                Status
+              </TableHead>
+              <TableHead className="text-[10px] uppercase font-black tracking-widest h-10 hidden sm:table-cell">
+                Findings
+              </TableHead>
+              <TableHead className="text-[10px] uppercase font-black tracking-widest h-10 text-right px-6 hidden md:table-cell">
+                Started
+              </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -66,8 +74,8 @@ export default function RecentScansTable() {
               scans.map((scan) => {
                 const config = SCAN_STATUS_CONFIG[scan.status];
                 return (
-                  <TableRow 
-                    key={scan.id} 
+                  <TableRow
+                    key={scan.id}
                     className="border-border/5 border-none! hover:bg-muted/30 cursor-pointer transition-colors group"
                     onClick={() => router.push(`/scans/${scan.id}`)}
                   >
@@ -86,7 +94,11 @@ export default function RecentScansTable() {
                     </TableCell>
                     <TableCell className="py-3">
                       <SeverityBadge
-                        theme={config.theme === "outlineSecondary" ? "none" : config.theme}
+                        theme={
+                          config.theme === "outlineSecondary"
+                            ? "none"
+                            : config.theme
+                        }
                         className="text-[9px] font-black uppercase tracking-tighter h-5 px-2"
                       >
                         {scan.status}
@@ -114,7 +126,10 @@ export default function RecentScansTable() {
               })
             ) : (
               <TableRow className="hover:bg-transparent">
-                <TableCell colSpan={4} className="h-32 text-center text-[10px] font-black uppercase tracking-widest opacity-30">
+                <TableCell
+                  colSpan={4}
+                  className="h-32 text-center text-[10px] font-black uppercase tracking-widest opacity-30"
+                >
                   No Scans Recorded
                 </TableCell>
               </TableRow>
@@ -125,5 +140,3 @@ export default function RecentScansTable() {
     </Card>
   );
 }
-
-

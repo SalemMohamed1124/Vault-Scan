@@ -4,10 +4,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { 
-  generateReport, 
-  downloadReportFile 
-} from "@/Services/Reports";
+import { generateReport, downloadReportFile } from "@/Services/Reports";
 import type { Report } from "@/types";
 
 export function useGenerateReport() {
@@ -18,13 +15,16 @@ export function useGenerateReport() {
     mutationFn: generateReport,
     onSuccess: () => {
       const isReportsPage = pathname === "/reports";
-      
+
       toast.success("Report generated successfully", {
         action: !isReportsPage ? (
-          <Link href="/reports" className="text-primary font-bold hover:underline text-xs mr-2 transition-all">
+          <Link
+            href="/reports"
+            className="text-primary font-bold hover:underline text-xs mr-2 transition-all"
+          >
             View reports
           </Link>
-        ) : undefined
+        ) : undefined,
       });
 
       queryClient.invalidateQueries({ queryKey: ["reports"] });

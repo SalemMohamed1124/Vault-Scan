@@ -1,10 +1,7 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { 
-  fetchAIAnalysis, 
-  fetchAIInsights 
-} from "@/Services/AI";
+import { fetchAIAnalysis, fetchAIInsights } from "@/Services/AI";
 import type { AiAnalysis, ChatMessage } from "@/types";
 
 export interface RemediationStep {

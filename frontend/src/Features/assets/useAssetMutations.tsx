@@ -5,11 +5,11 @@ import { toast } from "sonner";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { Asset } from "@/types";
-import { 
-  deleteAsset, 
-  createAsset, 
-  updateAsset, 
-  bulkCreateAssets 
+import {
+  deleteAsset,
+  createAsset,
+  updateAsset,
+  bulkCreateAssets,
 } from "@/Services/Assets";
 import type { AxiosError } from "axios";
 
@@ -45,13 +45,16 @@ export function useCreateAsset() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["assets"] });
       const isAssetsPage = pathname === "/assets";
-      toast.success("Asset added successfully", { 
+      toast.success("Asset added successfully", {
         position: "top-center",
         action: !isAssetsPage ? (
-          <Link href="/assets" className="text-primary font-bold hover:underline text-xs mr-2 transition-all">
+          <Link
+            href="/assets"
+            className="text-primary font-bold hover:underline text-xs mr-2 transition-all"
+          >
             View assets
           </Link>
-        ) : undefined
+        ) : undefined,
       });
     },
     onError: () => {
@@ -72,8 +75,13 @@ export function useUpdateAsset(id?: string) {
   const queryClient = useQueryClient();
 
   const mutation = useMutation({
-    mutationFn: ({ id, updatedAsset }: { id: string; updatedAsset: Partial<Asset> }) => 
-      updateAsset(id, updatedAsset),
+    mutationFn: ({
+      id,
+      updatedAsset,
+    }: {
+      id: string;
+      updatedAsset: Partial<Asset>;
+    }) => updateAsset(id, updatedAsset),
     onSuccess: () => {
       toast.success("Asset updated successfully", { position: "top-center" });
       queryClient.invalidateQueries({ queryKey: ["assets"] });
@@ -102,14 +110,17 @@ export function useBulkCreateAssets() {
     onSuccess: (data: { created: Asset[]; skipped: any[] }) => {
       const { created, skipped } = data;
       const isAssetsPage = pathname === "/assets";
-      
+
       if (created?.length > 0) {
         toast.success(`Registered ${created.length} new assets`, {
           action: !isAssetsPage ? (
-            <Link href="/assets" className="text-primary font-bold hover:underline text-xs mr-2 transition-all">
+            <Link
+              href="/assets"
+              className="text-primary font-bold hover:underline text-xs mr-2 transition-all"
+            >
               View assets
             </Link>
-          ) : undefined
+          ) : undefined,
         });
       }
       if (skipped?.length > 0) {
@@ -118,7 +129,9 @@ export function useBulkCreateAssets() {
       queryClient.invalidateQueries({ queryKey: ["assets"] });
     },
     onError: (error: AxiosError<{ message: string }>) => {
-      toast.error(error.response?.data?.message || "Failed to bulk register assets");
+      toast.error(
+        error.response?.data?.message || "Failed to bulk register assets",
+      );
     },
   });
 

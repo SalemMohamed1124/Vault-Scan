@@ -4,10 +4,10 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { 
-  deleteSchedule, 
-  createSchedule, 
-  updateSchedule 
+import {
+  deleteSchedule,
+  createSchedule,
+  updateSchedule,
 } from "@/Services/Schedules";
 import type { ScanSchedule } from "@/types";
 
@@ -22,10 +22,13 @@ export function useCreateSchedule() {
       const isSchedulesPage = pathname === "/schedules";
       toast.success("Schedule created successfully", {
         action: !isSchedulesPage ? (
-          <Link href="/schedules" className="text-primary font-bold hover:underline text-xs mr-2 transition-all">
+          <Link
+            href="/schedules"
+            className="text-primary font-bold hover:underline text-xs mr-2 transition-all"
+          >
             View schedules
           </Link>
-        ) : undefined
+        ) : undefined,
       });
     },
     onError: () => {
@@ -46,7 +49,7 @@ export function useUpdateSchedule(id?: string) {
   const queryClient = useQueryClient();
 
   const mutation = useMutation({
-    mutationFn: ({ id, data }: { id: string; data: Partial<ScanSchedule> }) => 
+    mutationFn: ({ id, data }: { id: string; data: Partial<ScanSchedule> }) =>
       updateSchedule(id, data),
     onSuccess: () => {
       toast.success("Schedule updated successfully");

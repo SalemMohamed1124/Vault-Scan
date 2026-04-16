@@ -3,7 +3,7 @@
 import { useViewModal } from "@/Contexts/ViewModalContext";
 import ReportForm from "./ReportForm";
 import { Button } from "@/components/ui/button";
-import { FilePlus2, Plus } from "lucide-react";
+import { Plus } from "lucide-react";
 
 export function useReportFormModals() {
   const { view } = useViewModal();
