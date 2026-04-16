@@ -42,7 +42,7 @@ export function useScanResults(id: string) {
     },
     error: scanError,
     actions: {
-      generateReport: () => generateReport.mutate({ scanId: id, format: "pdf" }),
+      generateReport: () => generateReport.mutate({ scanId: id, format: "PDF" }),
       isGeneratingReport: generateReport.isPending,
       deleteScan: handleDelete,
       isDeleting: deleteScan.isPending,
