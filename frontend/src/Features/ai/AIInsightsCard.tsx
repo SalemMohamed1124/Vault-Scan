@@ -41,13 +41,12 @@ const severityConfig: Record<
 
 export function AIInsightsCard() {
   const {
-    data: insights,
-    isLoading,
+    insights,
+    isPending,
     refetch,
-    isFetching,
   } = useAiInsights();
 
-  if (isLoading || (!insights && isFetching)) {
+  if (isPending || !insights) {
     return (
       <div className="glass-card rounded-xl border border-border/50 bg-muted/30 overflow-hidden min-h-[220px]">
         <div className="flex items-center justify-between border-b border-border/50 bg-muted/30 px-6 py-4">
@@ -102,11 +101,11 @@ export function AIInsightsCard() {
         </div>
         <button
           onClick={() => refetch()}
-          disabled={isFetching}
+          disabled={isPending}
           className="rounded-lg p-2 text-muted-foreground hover:bg-muted/50 hover:text-foreground transition-colors"
           title="Refresh insights"
         >
-          <RefreshCw className={cn("h-4 w-4", isFetching && "animate-spin")} />
+          <RefreshCw className={cn("h-4 w-4", isPending && "animate-spin")} />
         </button>
       </div>
 
