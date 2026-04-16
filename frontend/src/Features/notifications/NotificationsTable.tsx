@@ -53,11 +53,9 @@ function MarkAllAsReadButton() {
   if (!unreadCount) return null;
   return (
     <Button
-      variant="primary"
-      size="sm"
       onClick={() => markAllReadApi()}
       disabled={isMarkAllReadPending}
-      className="h-10 primary text-black font-black gap-2 px-5 rounded-md shadow-lg shadow-orange-500/10 border-none transition-all"
+      className="flex-1 transition-none"
     >
       {isMarkAllReadPending ? (
         <Spinner className="size-4" />

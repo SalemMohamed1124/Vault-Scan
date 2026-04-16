@@ -27,9 +27,9 @@ export default function DataTableSortFilterModal<TData>({
   const [open, setOpen] = React.useState(false);
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+      <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" size="sm" className="h-9  px-3 ">
+        <Button variant="outline" size="sm" className="h-9 px-3 transition-none">
           <Funnel className="mr-2 size-4 opacity-50" /> Sort & Filter
         </Button>
       </DialogTrigger>
