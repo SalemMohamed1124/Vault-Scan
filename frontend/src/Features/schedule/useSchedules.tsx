@@ -2,15 +2,16 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { fetchSchedules, fetchAssetsForSchedules, fetchSchedule } from "@/Services/Schedules";
+import type { ScanSchedule } from "@/types";
 
 export function useSchedules() {
-  const query = useQuery({
+  const query = useQuery<ScanSchedule[]>({
     queryKey: ["schedules"],
     queryFn: fetchSchedules,
   });
 
-  const items = query.data?.data ?? [];
-  const total = query.data?.total ?? 0;
+  const items = query.data ?? [];
+  const total = items.length;
   const isEmpty = !query.isPending && !query.isError && items.length === 0;
 
   return {

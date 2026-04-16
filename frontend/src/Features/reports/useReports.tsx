@@ -15,7 +15,7 @@ export function useReports() {
   });
 
   const items = query.data?.data ?? [];
-  const total = query.data?.total ?? 0;
+  const total = items.length;
   const isEmpty = !query.isPending && !query.isError && items.length === 0;
 
   return {

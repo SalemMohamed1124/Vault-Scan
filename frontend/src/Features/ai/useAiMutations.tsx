@@ -55,10 +55,12 @@ export function useAiRemediation(findingId: string) {
   });
 
   return {
+    data: mutation.data,
     mutate: mutation.mutate,
     mutateAsync: mutation.mutateAsync,
     isPending: mutation.isPending,
     isError: mutation.isError,
     error: mutation.error,
+    isIdle: !mutation.isPending && !mutation.isError && !mutation.data,
   };
 }
