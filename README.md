@@ -16,16 +16,16 @@
 
 ## Tech Stack
 
-| Layer | Technology |
-|-------|-----------|
-| Frontend | Next.js 16, React 19, Tailwind CSS v4, shadcn/ui |
-| Backend | NestJS 11, TypeORM, PostgreSQL 15 |
-| Queue | BullMQ + Redis 7 |
-| AI | Google Gemini API |
+| Layer    | Technology                                        |
+| -------- | ------------------------------------------------- |
+| Frontend | Next.js 16, React 19, Tailwind CSS v4, shadcn/ui  |
+| Backend  | NestJS 11, TypeORM, PostgreSQL 15                 |
+| Queue    | BullMQ + Redis 7                                  |
+| AI       | Google Gemini API                                 |
 | Scanning | Python 3.11+ (nmap, SSL checks, SQLi/XSS testing) |
-| Auth | JWT (access + refresh tokens) |
-| Reports | Puppeteer (PDF generation) |
-| Docs | Swagger / OpenAPI |
+| Auth     | JWT (access + refresh tokens)                     |
+| Reports  | Puppeteer (PDF generation)                        |
+| Docs     | Swagger / OpenAPI                                 |
 
 ## Quick Start
 
@@ -66,9 +66,9 @@ Open http://localhost:3000
 
 ### Demo Accounts
 
-| Role | Email | Password |
-|------|-------|----------|
-| Admin | admin@demo.com | Admin123! |
+| Role   | Email           | Password   |
+| ------ | --------------- | ---------- |
+| Admin  | admin@demo.com  | Admin123!  |
 | Editor | editor@demo.com | Editor123! |
 | Viewer | viewer@demo.com | Viewer123! |
 
@@ -76,22 +76,22 @@ Open http://localhost:3000
 
 ### Backend (`.env`)
 
-| Variable | Description | Default |
-|----------|-------------|---------|
-| `DATABASE_URL` | PostgreSQL connection string | `postgresql://vaultscan:vaultscan_secret@localhost:5434/vaultscan` |
-| `JWT_SECRET` | JWT signing secret (min 32 chars) | — |
-| `JWT_REFRESH_SECRET` | Refresh token secret (min 32 chars) | — |
-| `REDIS_HOST` | Redis host | `localhost` |
-| `REDIS_PORT` | Redis port | `6380` |
-| `GEMINI_API_KEY` | Google Gemini API key | — |
-| `GEMINI_MODEL` | Gemini model name | `gemini-2.0-flash-exp` |
-| `PORT` | API server port | `3001` |
-| `FRONTEND_URL` | Frontend URL for CORS | `http://localhost:3000` |
+| Variable             | Description                         | Default                                                            |
+| -------------------- | ----------------------------------- | ------------------------------------------------------------------ |
+| `DATABASE_URL`       | PostgreSQL connection string        | `postgresql://vaultscan:vaultscan_secret@localhost:5434/vaultscan` |
+| `JWT_SECRET`         | JWT signing secret (min 32 chars)   | —                                                                  |
+| `JWT_REFRESH_SECRET` | Refresh token secret (min 32 chars) | —                                                                  |
+| `REDIS_HOST`         | Redis host                          | `localhost`                                                        |
+| `REDIS_PORT`         | Redis port                          | `6380`                                                             |
+| `GEMINI_API_KEY`     | Google Gemini API key               | —                                                                  |
+| `GEMINI_MODEL`       | Gemini model name                   | `gemini-2.0-flash-exp`                                             |
+| `PORT`               | API server port                     | `3001`                                                             |
+| `FRONTEND_URL`       | Frontend URL for CORS               | `http://localhost:3000`                                            |
 
 ### Frontend (`.env.local`)
 
-| Variable | Description | Default |
-|----------|-------------|---------|
+| Variable              | Description     | Default                 |
+| --------------------- | --------------- | ----------------------- |
 | `NEXT_PUBLIC_API_URL` | Backend API URL | `http://localhost:3001` |
 
 ## Architecture
@@ -99,6 +99,7 @@ Open http://localhost:3000
 ```
 vaultscan/
   backend/           # NestJS API server
+    scripts/           # Python scan scripts
     src/
       modules/       # Feature modules (auth, scans, assets, etc.)
       common/        # Shared guards, decorators, enums
@@ -111,7 +112,6 @@ vaultscan/
       components/    # UI components (shadcn/ui + custom)
       hooks/         # Custom React hooks
       lib/           # API client, auth, utilities
-  scripts/           # Python scan scripts
   docker-compose.yml # Infrastructure services
 ```
 
@@ -121,14 +121,17 @@ Available at http://localhost:3001/api/docs (Swagger UI) when the backend is run
 
 ## Scan Scripts
 
-| Script | Purpose |
-|--------|---------|
-| `chk_quick.py` | HTTP headers, HTTPS redirect, .env exposure |
-| `chk_01_sql.py` | SQL injection testing |
-| `chk_02_xss.py` | Cross-site scripting testing |
-| `chk_17_nmap.py` | Port scanning (nmap or socket fallback) |
-| `ssl_checker.py` | SSL/TLS certificate validation |
-| `service_fingerprint.py` | Service banner grabbing |
+The project includes over 40 specialized security scripts covering a wide range of vulnerabilities, including CSRF, SSRF, IDOR, Rate Limiting, WAF Detection, and more. Some of the core scripts include:
+
+| Script                   | Purpose                                     |
+| ------------------------ | ------------------------------------------- |
+| `chk_quick.py`           | HTTP headers, HTTPS redirect, .env exposure |
+| `chk_01_sql.py`          | SQL injection testing                       |
+| `chk_02_xss.py`          | Cross-site scripting testing                |
+| `chk_17_nmap.py`         | Port scanning (nmap or socket fallback)     |
+| `chk_40_waf_detect.py`   | Web Application Firewall (WAF) detection    |
+| `ssl_checker.py`         | SSL/TLS certificate validation              |
+| `service_fingerprint.py` | Service banner grabbing                     |
 
 Set `SCAN_MOCK_MODE=true` to use mock data during development.
 
@@ -144,7 +147,3 @@ docker compose -f docker-compose.yml up --build -d
 # - Backend API (port 3001)
 # - Frontend (port 3000)
 ```
-
-## License
-
-This project is part of a graduation thesis and is not licensed for commercial use.
