@@ -182,8 +182,6 @@ function extractFindingsCount(phase: string): number | null {
   return match ? parseInt(match[1], 10) : null;
 }
 
-
-
 export function ScanProgress({ scanId, onComplete }: ScanProgressProps) {
   const [progress, setProgress] = useState(0);
   const [phase, setPhase] = useState("Initializing...");
@@ -345,7 +343,9 @@ export function ScanProgress({ scanId, onComplete }: ScanProgressProps) {
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-500 opacity-75" />
             <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500" />
           </div>
-          <span className="text-xs font-bold text-foreground tracking-widest">SCANNING</span>
+          <span className="text-xs font-bold text-foreground tracking-widest">
+            SCANNING
+          </span>
           <span className="text-[11px] text-muted-foreground tabular-nums">
             {formatTime(elapsed)}
           </span>
@@ -362,7 +362,9 @@ export function ScanProgress({ scanId, onComplete }: ScanProgressProps) {
               <span className="text-[11px] font-bold text-red-400 tabular-nums">
                 {findingsCount}
               </span>
-              <span className="text-[10px] text-red-400/60 font-bold uppercase tracking-tight">issues</span>
+              <span className="text-[10px] text-red-400/60 font-bold uppercase tracking-tight">
+                issues
+              </span>
             </div>
           )}
           <span className="text-xl font-black text-transparent bg-clip-text bg-gradient-to-r from-sky-400 to-cyan-400 tabular-nums">
@@ -426,16 +428,25 @@ export function ScanProgress({ scanId, onComplete }: ScanProgressProps) {
                 {/* Content */}
                 <div className="flex-1 min-w-0">
                   {line.type === "phase" ? (
-                    <span className="text-sky-400 font-bold">
-                      {line.text}
-                    </span>
+                    <span className="text-sky-400 font-bold">{line.text}</span>
                   ) : line.type === "finding" ? (
                     <span className="flex items-center gap-2">
-                      <span className="text-red-400 font-medium">{line.text}</span>
-                      {line.severity && <SeverityBadge theme={line.severity as any} className="text-[9px] px-1.5 py-0.5 leading-none h-auto">{line.severity}</SeverityBadge>}
+                      <span className="text-red-400 font-medium">
+                        {line.text}
+                      </span>
+                      {line.severity && (
+                        <SeverityBadge
+                          theme={line.severity as any}
+                          className="text-[9px] px-1.5 py-0.5 leading-none h-auto"
+                        >
+                          {line.severity}
+                        </SeverityBadge>
+                      )}
                     </span>
                   ) : (
-                    <span className="text-slate-300 font-medium">{line.text}</span>
+                    <span className="text-slate-300 font-medium">
+                      {line.text}
+                    </span>
                   )}
                 </div>
 

@@ -3,11 +3,11 @@
 import { useQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
 import type { ScanStatus, Scan, ScanFinding } from "@/types";
-import { 
-  fetchScans, 
-  fetchScan, 
-  fetchScanFindings, 
-  fetchScanRawOutput 
+import {
+  fetchScans,
+  fetchScan,
+  fetchScanFindings,
+  fetchScanRawOutput,
 } from "@/Services/Scans";
 
 import { calculateScanStats } from "@/lib/scan-utils";
@@ -23,9 +23,11 @@ export function useScans(params: {
     queryFn: () => fetchScans(params),
     refetchInterval: (queryState) => {
       // If any scan is still running, refetch more frequently
-      const hasRunning = queryState.state.data?.data?.some(s => s.status === "RUNNING");
+      const hasRunning = queryState.state.data?.data?.some(
+        (s) => s.status === "RUNNING",
+      );
       return hasRunning ? 5000 : 30000;
-    }
+    },
   });
 
   const items = query.data?.data ?? [];
@@ -45,9 +47,10 @@ export function useScans(params: {
 
 export function useScansStats() {
   const { items, isPending } = useScans({ limit: 100 });
-  
+
   const stats = useMemo(() => {
-    if (!items || items.length === 0) return { total: 0, runningNow: 0, completedToday: 0, avgDuration: "--" };
+    if (!items || items.length === 0)
+      return { total: 0, runningNow: 0, completedToday: 0, avgDuration: "--" };
     return calculateScanStats(items, items.length);
   }, [items]);
 
