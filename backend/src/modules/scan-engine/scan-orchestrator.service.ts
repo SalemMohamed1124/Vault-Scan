@@ -694,7 +694,10 @@ export class ScanOrchestratorService {
           vulnerability = this.vulnRepo.create({
             name: finding.vulnerabilityName,
             severity: finding.severity,
-            description: finding.evidence || finding.vulnerabilityName,
+            description: this.getDefaultDescription(
+              finding.vulnerabilityName,
+              finding.category,
+            ),
             remediation: this.getDefaultRemediation(
               finding.category,
               finding.severity,
@@ -721,6 +724,53 @@ export class ScanOrchestratorService {
         );
       }
     }
+  }
+
+  private getDefaultDescription(
+    vulnerabilityName: string,
+    category: string,
+  ): string {
+    const descriptions: Record<string, string> = {
+      AUTH_DISCOVERY:
+        'A login form or authentication endpoint was detected on the target. Authentication endpoints are common targets for brute force, credential stuffing, and bypass attacks.',
+      INJECTION:
+        'An injection vulnerability was detected. Injection flaws allow attackers to send malicious data to an interpreter, potentially executing unintended commands or accessing data without authorization.',
+      XSS:
+        'A Cross-Site Scripting (XSS) vulnerability was detected. XSS allows attackers to inject client-side scripts into web pages viewed by other users.',
+      CSRF:
+        'A Cross-Site Request Forgery (CSRF) vulnerability was detected. CSRF tricks authenticated users into unknowingly submitting malicious requests.',
+      OPEN_REDIRECT:
+        'An open redirect vulnerability was detected. Attackers can exploit this to redirect users to malicious sites, facilitating phishing attacks.',
+      LFI:
+        'A Local File Inclusion (LFI) vulnerability was detected. This may allow attackers to read sensitive files from the server.',
+      MISCONFIGURATION:
+        'A security misconfiguration was detected. Misconfigurations are the most common security issue and can expose sensitive data or allow unauthorized access.',
+      CORS:
+        'A Cross-Origin Resource Sharing (CORS) misconfiguration was detected. Improper CORS settings can allow unauthorized cross-origin requests.',
+      COOKIE_SECURITY:
+        'Insecure cookie attributes were detected. Cookies without proper security flags are vulnerable to theft via XSS or interception.',
+      DNS:
+        'A DNS security issue was detected. DNS misconfigurations can facilitate domain hijacking, email spoofing, or zone transfer attacks.',
+      SSRF:
+        'A Server-Side Request Forgery (SSRF) vulnerability was detected. SSRF allows attackers to induce the server to make requests to unintended locations.',
+      ACCESS_CONTROL:
+        'An access control weakness was detected. Improper access controls can allow attackers to access resources or perform actions beyond their authorization.',
+      SSL_TLS:
+        'An SSL/TLS security issue was detected. Weak or misconfigured TLS can expose encrypted communications to interception or downgrade attacks.',
+      HTTP_SECURITY:
+        'A missing or misconfigured HTTP security header was detected. Security headers protect against common web attacks such as XSS, clickjacking, and information disclosure.',
+      INFORMATION_DISCLOSURE:
+        'Sensitive information disclosure was detected. Exposed data may assist attackers in fingerprinting the application or discovering further vulnerabilities.',
+      NETWORK:
+        'A network-level security issue was detected. Exposed services or open ports may provide attack vectors for unauthorized access.',
+      SERVICE_VERSION:
+        'An outdated or vulnerable service version was detected. Unpatched software versions may contain known vulnerabilities with public exploits.',
+    };
+
+    return (
+      descriptions[category] ||
+      `${vulnerabilityName} was detected on the target. Review the vulnerability evidence for details and apply appropriate remediation.`
+    );
   }
 
   private getDefaultRemediation(
