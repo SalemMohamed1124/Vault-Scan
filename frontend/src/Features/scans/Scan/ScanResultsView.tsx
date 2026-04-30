@@ -23,6 +23,7 @@ import { FindingsTable } from "./FindingsTable";
 import { RawOutputSection } from "./RawOutputSection";
 import { ScanDetailsSection } from "./ScanDetailsSection";
 import { AIAnalysisCard } from "@/Features/ai/AIAnalysisCard";
+import { SeverityBadge } from "@/components/layout/SeverityBadge";
 
 import type { Scan, ScanFinding } from "@/types";
 
@@ -171,24 +172,10 @@ export default function ScanResultsView({
                 {Object.entries(groupedFindings).map(([severity, items]) => (
                   <div key={severity} className="space-y-3">
                     <div className="flex items-center gap-2 px-1">
-                      <div
-                        className={cn(
-                          "size-2.5 rounded-full shadow-sm",
-                          severity === "CRITICAL"
-                            ? "bg-red-500"
-                            : severity === "HIGH"
-                              ? "bg-orange-500"
-                              : severity === "MEDIUM"
-                                ? "bg-amber-500"
-                                : "bg-blue-500",
-                        )}
-                      />
-                      <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-foreground opacity-60">
+                      <SeverityBadge theme={severity as any} className="gap-1.5 px-2 py-0.5 font-bold">
                         {severity}
-                      </h3>
-                      <span className="text-[10px] font-black text-muted-foreground/60 bg-muted px-1.5 py-0.5">
-                        {items.length}
-                      </span>
+                        <span className="opacity-60">{items.length}</span>
+                      </SeverityBadge>
                     </div>
                     <FindingsTable findings={items} isGrouped />
                   </div>

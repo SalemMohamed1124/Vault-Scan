@@ -38,21 +38,13 @@ export default function ScanMobileCard({ scan }: { scan: Scan }) {
       <MobileCard.Content>
         {/* Scan Progress (if running) */}
         {status === "RUNNING" && (
-          <div className="px-1 mb-2">
-            <div className="flex justify-between items-center mb-1.5">
-              <span className="text-[10px] font-black uppercase tracking-widest text-primary/70">
-                Scanning Progress
-              </span>
-              <span className="text-[10px] font-black text-primary">
-                {scan.progress || 0}%
-              </span>
-            </div>
-            <div className="h-1 w-full rounded-full bg-primary/10 overflow-hidden border border-primary/5">
-              <div
-                className="h-full bg-primary transition-all duration-500"
-                style={{ width: `${Math.max(5, scan.progress || 0)}%` }}
-              />
-            </div>
+          <div className="px-1 mb-2 flex items-center gap-2">
+            <span className="text-[10px] font-black uppercase tracking-widest text-primary/70">
+              Scanning
+            </span>
+            <span className="text-[10px] font-black text-primary tabular-nums">
+              {scan.progress || 0}%
+            </span>
           </div>
         )}
 
@@ -98,17 +90,17 @@ export default function ScanMobileCard({ scan }: { scan: Scan }) {
             </span>
             <div className="flex items-center gap-2">
               {[
-                { count: summary.critical, color: "bg-red-500" },
-                { count: summary.high, color: "bg-orange-500" },
-                { count: summary.medium, color: "bg-amber-500" },
-                { count: summary.low, color: "bg-blue-500" },
+                { count: summary.critical, theme: "CRITICAL" },
+                { count: summary.high, theme: "HIGH" },
+                { count: summary.medium, theme: "MEDIUM" },
+                { count: summary.low, theme: "LOW" },
               ].map(
                 (s, idx) =>
                   s.count > 0 && (
-                    <div key={idx} className="flex items-center gap-1 shrink-0">
-                      <div className={cn("size-2 rounded-full", s.color)} />
-                      <span className="text-xs font-bold">{s.count}</span>
-                    </div>
+                    <SeverityBadge key={idx} theme={s.theme as any} className="gap-1 px-1.5 py-0 font-bold shrink-0">
+                      <span className="text-[10px] uppercase opacity-70 tracking-wider">{s.theme}</span>
+                      <span className="text-xs">{s.count}</span>
+                    </SeverityBadge>
                   ),
               )}
             </div>

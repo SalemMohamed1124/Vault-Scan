@@ -67,41 +67,30 @@ export default function ScanDetailView({ scan }: { scan: Scan }) {
               {
                 label: "Critical",
                 count: summary.critical,
-                color: "text-red-500",
-                bg: "bg-red-500/10",
               },
               {
                 label: "High",
                 count: summary.high,
-                color: "text-orange-500",
-                bg: "bg-orange-500/10",
               },
               {
                 label: "Medium",
                 count: summary.medium,
-                color: "text-amber-500",
-                bg: "bg-amber-500/10",
               },
               {
                 label: "Low",
                 count: summary.low,
-                color: "text-blue-500",
-                bg: "bg-blue-500/10",
               },
             ].map((s, idx) => (
-              <div
+              <SeverityBadge
                 key={idx}
-                className={`flex items-center justify-between p-2 ${s.bg}`}
+                theme={s.label.toUpperCase() as any}
+                className="flex items-center justify-between p-2 font-bold w-full"
               >
-                <span
-                  className={`text-[10px] font-black uppercase tracking-wider ${s.color}`}
-                >
+                <span className="text-[10px] uppercase tracking-wider">
                   {s.label}
                 </span>
-                <span className={`text-xs font-bold ${s.color}`}>
-                  {s.count}
-                </span>
-              </div>
+                <span className="text-xs">{s.count}</span>
+              </SeverityBadge>
             ))}
           </div>
         </DetailCard.Section>
