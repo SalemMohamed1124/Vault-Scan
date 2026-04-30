@@ -16,6 +16,8 @@ import { useViewModal } from "@/Contexts/ViewModalContext";
 import FindingDetailView from "./FindingDetailView";
 import { AIRemediationView } from "@/Features/ai/AIRemediationModal";
 import type { ScanFinding } from "@/types";
+import { SeverityBadge } from "@/components/layout/SeverityBadge";
+import { cn } from "@/lib/utils";
 
 export default function FindingRowActions({ finding }: { finding: ScanFinding }) {
   const deleteOne = useDeleteFinding();
@@ -43,6 +45,18 @@ export default function FindingRowActions({ finding }: { finding: ScanFinding })
 
   const handleAiFix = () => {
     view({
+      title: "AI Remediation Guide",
+      description: (
+        <div className="flex items-center gap-2 mt-1">
+          <span className="truncate">{finding.vulnerability?.name || "Unknown Vulnerability"}</span>
+          <SeverityBadge 
+            theme={finding.vulnerability?.severity as any || "LOW"} 
+            className="px-1.5 py-0 text-[10px] uppercase"
+          >
+            {finding.vulnerability?.severity || "LOW"}
+          </SeverityBadge>
+        </div>
+      ),
       content: (
         <AIRemediationView
           findingId={finding.id}
@@ -51,7 +65,6 @@ export default function FindingRowActions({ finding }: { finding: ScanFinding })
         />
       ),
       noPadding: true,
-      hideCloseButton: true,
       maxWidth: "sm:max-w-2xl",
     });
   };
