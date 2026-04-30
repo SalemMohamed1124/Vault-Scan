@@ -23,6 +23,7 @@ import type { Scan, ScanStatus } from "@/types";
 
 import { Spinner } from "@/components/ui/spinner";
 import Link from "next/link";
+import { SeverityBadge } from "@/components/layout/SeverityBadge";
 import { ArrowLeft } from "lucide-react";
 import { useConfirm } from "@/Contexts/ConfirmModalContext";
 
@@ -106,17 +107,13 @@ export function ScanResultHeader({
                 </div>
                 <div className="flex items-center gap-2 mt-1 sm:mt-0">
                   <ScanStatusBadge status={scan.status} />
-                  <span
-                    className={cn(
-                      "inline-flex items-center gap-1.5 rounded-md px-2 py-0.5 text-xs font-black uppercase tracking-widest",
-                      scan.type === "DEEP"
-                        ? "bg-primary/10 text-primary"
-                        : "bg-muted text-muted-foreground",
-                    )}
+                  <SeverityBadge 
+                    theme={scan.type === "DEEP" ? "INFORMATIVE" : "OUTLINE_SECONDARY"}
+                    className="gap-1.5"
                   >
                     {scan.type === "DEEP" ? <Layers className="size-3.5" /> : <Zap className="size-3.5" />}
                     {scan.type}
-                  </span>
+                  </SeverityBadge>
                 </div>
               </div>
 

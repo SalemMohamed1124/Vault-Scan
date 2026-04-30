@@ -17,6 +17,7 @@ import {
 import { cn } from "@/lib/utils";
 import { useAiRemediation } from "./useAiMutations";
 import { useViewModal } from "@/Contexts/ViewModalContext";
+import { SeverityBadge } from "@/components/layout/SeverityBadge";
 
 export interface AIRemediationViewProps {
   findingId: string;
@@ -61,39 +62,6 @@ export function AIRemediationView({
 
   return (
     <div className="flex flex-col h-full bg-background/95">
-      {/* Header */}
-      <div className="flex items-center justify-between border-b border-border/50 bg-muted/30 px-6 py-4 shrink-0">
-        <div className="flex items-center gap-3 min-w-0">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/20">
-            <Wand2 className="h-5 w-5 text-primary" />
-          </div>
-          <div className="min-w-0">
-            <h3 className="text-sm font-bold text-foreground">
-              AI Remediation Guide
-            </h3>
-            <div className="flex items-center gap-2 mt-0.5">
-              <span className="text-xs text-muted-foreground font-medium truncate">
-                {findingName}
-              </span>
-              <span
-                className={cn(
-                  "rounded-full border px-2 py-0 text-[10px] font-bold tracking-widest uppercase",
-                  sevColors[severity] ?? sevColors.MEDIUM,
-                )}
-              >
-                {severity}
-              </span>
-            </div>
-          </div>
-        </div>
-        <button
-          onClick={close}
-          className="rounded-lg p-1.5 text-muted-foreground hover:bg-muted/50 hover:text-foreground transition-colors shrink-0"
-        >
-          <X className="h-5 w-5" />
-        </button>
-      </div>
-
       {/* Content */}
       <div className="flex-1 overflow-y-auto px-6 py-5 space-y-6 custom-scrollbar">
         {isPending ? (
@@ -266,6 +234,15 @@ export function AIRemediationButton({
     <button
       onClick={() => {
         view({
+          title: "AI Remediation Guide",
+          description: (
+            <div className="flex items-center gap-2 mt-1">
+              <span className="truncate">{findingName}</span>
+              <SeverityBadge theme={severity as any} className="px-1.5 py-0 text-[10px] uppercase">
+                {severity}
+              </SeverityBadge>
+            </div>
+          ),
           content: (
             <AIRemediationView
               findingId={findingId}
@@ -274,7 +251,6 @@ export function AIRemediationButton({
             />
           ),
           noPadding: true,
-          hideCloseButton: true,
           maxWidth: "sm:max-w-2xl",
         });
       }}

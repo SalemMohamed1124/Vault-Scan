@@ -77,13 +77,13 @@ export const ScanColumns: ColumnDef<Scan>[] = [
       const Icon = config.icon;
       return (
         <div className="flex items-center">
-          {status === "RUNNING" ? (
-            <div className="h-1 w-16 rounded-full bg-muted overflow-hidden flex-1">
-              <div
-                className="h-full bg-primary animate-pulse transition-all duration-500"
-                style={{ width: `${Math.max(5, row.original.progress || 0)}%` }}
-              />
-            </div>
+          {status === "RUNNING" || status === "PENDING" ? (
+            <SeverityBadge theme={config.theme} className="gap-1.5">
+              <Icon className="size-3 animate-spin" />
+              <span className="text-xs font-bold tabular-nums">
+                {status === "PENDING" ? "Pending" : `${row.original.progress || 0}%`}
+              </span>
+            </SeverityBadge>
           ) : (
             <SeverityBadge theme={config.theme} className="gap-1.5">
               <Icon className="size-3" />

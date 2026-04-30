@@ -12,7 +12,7 @@ import { cn } from "@/lib/utils";
 
 type ViewOptions = {
   title?: string;
-  description?: string;
+  description?: React.ReactNode;
   content: React.ReactNode;
   defaultScroll?: boolean;
   className?: string;
@@ -69,9 +69,9 @@ export function ViewModalContextProvider({
                 {options.title}
               </DialogTitle>
               {options.description ? (
-                <DialogDescription className="text-xs text-muted-foreground mt-1 tracking-tight">
+                <div className="text-xs text-muted-foreground mt-1 tracking-tight">
                     {options.description}
-                </DialogDescription>
+                </div>
               ) : (
                 <DialogDescription className="sr-only">
                   Modal description for {options.title}

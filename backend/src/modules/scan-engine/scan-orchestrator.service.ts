@@ -86,75 +86,189 @@ export class ScanOrchestratorService {
         ),
       ]);
 
-      const authFindings = this.extractSettledResults(authResults, scanId).flat();
-      const authSession = authFindings.find(f => f.vulnerability === '__AUTH_SESSION__');
-      const discoveredCookies = authSession?.raw_details?.cookies as string | undefined;
+      const authFindings = this.extractSettledResults(
+        authResults,
+        scanId,
+      ).flat();
+      const authSession = authFindings.find(
+        (f) => f.vulnerability === '__AUTH_SESSION__',
+      );
+      const discoveredCookies = authSession?.raw_details?.cookies as
+        | string
+        | undefined;
 
       let scanAuthArgs = [...authArgs];
       if (discoveredCookies && !jobData.cookies) {
-        scanAuthArgs = ['--cookies', discoveredCookies, ...authArgs.filter(a => a !== '--cookies')];
-        this.emitProgress(scanId, 5, 'Authentication bypass successful — scanning with session');
+        scanAuthArgs = [
+          '--cookies',
+          discoveredCookies,
+          ...authArgs.filter((a) => a !== '--cookies'),
+        ];
+        this.emitProgress(
+          scanId,
+          5,
+          'Authentication bypass successful — scanning with session',
+        );
       }
 
-      const realAuthFindings = authFindings.filter(f => f.vulnerability !== '__AUTH_SESSION__');
+      const realAuthFindings = authFindings.filter(
+        (f) => f.vulnerability !== '__AUTH_SESSION__',
+      );
       if (realAuthFindings.length > 0) allScriptResults.push(realAuthFindings);
 
-      this.emitProgress(scanId, 10, `Auth phase complete — ${allScriptResults.flat().length} issues`);
+      this.emitProgress(
+        scanId,
+        10,
+        `Auth phase complete — ${allScriptResults.flat().length} issues`,
+      );
 
       // ── Phase 1: Infrastructure (10→30%) — all parallel ──
-      this.emitProgress(scanId, 12, 'Scanning infrastructure: ports, headers, SSL, cookies');
+      this.emitProgress(
+        scanId,
+        12,
+        'Scanning infrastructure: ports, headers, SSL, cookies',
+      );
 
       const phase1Results = await Promise.allSettled([
-        this.scriptRunner.runScript('chk_quick.py', ['--target', assetValue, ...scanAuthArgs], scanId, QUICK_TIMEOUT),
-        this.scriptRunner.runScript('chk_22_cookie_security.py', ['--target', assetValue, ...scanAuthArgs], scanId, QUICK_TIMEOUT),
-        ...(isWebAsset ? [
-          this.scriptRunner.runScript('ssl_checker.py', ['--target', assetValue, ...scanAuthArgs], scanId, QUICK_TIMEOUT),
-          this.scriptRunner.runScript('chk_19_clickjacking.py', ['--target', assetValue, ...scanAuthArgs], scanId, QUICK_TIMEOUT),
-        ] : []),
+        this.scriptRunner.runScript(
+          'chk_quick.py',
+          ['--target', assetValue, ...scanAuthArgs],
+          scanId,
+          QUICK_TIMEOUT,
+        ),
+        this.scriptRunner.runScript(
+          'chk_22_cookie_security.py',
+          ['--target', assetValue, ...scanAuthArgs],
+          scanId,
+          QUICK_TIMEOUT,
+        ),
+        ...(isWebAsset
+          ? [
+              this.scriptRunner.runScript(
+                'ssl_checker.py',
+                ['--target', assetValue, ...scanAuthArgs],
+                scanId,
+                QUICK_TIMEOUT,
+              ),
+              this.scriptRunner.runScript(
+                'chk_19_clickjacking.py',
+                ['--target', assetValue, ...scanAuthArgs],
+                scanId,
+                QUICK_TIMEOUT,
+              ),
+            ]
+          : []),
       ]);
-      allScriptResults.push(...this.extractSettledResults(phase1Results, scanId));
-      this.emitProgress(scanId, 30, `Infrastructure scan done — ${allScriptResults.flat().length} issues found`);
+      allScriptResults.push(
+        ...this.extractSettledResults(phase1Results, scanId),
+      );
+      this.emitProgress(
+        scanId,
+        30,
+        `Infrastructure scan done — ${allScriptResults.flat().length} issues found`,
+      );
 
       // ── Phase 2: Vulnerability Testing (30→70%) — all parallel ──
       if (isWebAsset) {
-        this.emitProgress(scanId, 32, 'Testing for SQL injection, XSS, CSRF & CORS');
+        this.emitProgress(
+          scanId,
+          32,
+          'Testing for SQL injection, XSS, CSRF & CORS',
+        );
 
         const phase2Results = await Promise.allSettled([
-          this.scriptRunner.runScript('chk_01_sql.py', ['--target', assetValue, ...scanAuthArgs], scanId, 45000),
-          this.scriptRunner.runScript('chk_02_xss.py', ['--target', assetValue, ...scanAuthArgs], scanId, 45000),
-          this.scriptRunner.runScript('chk_03_csrf.py', ['--target', assetValue, ...scanAuthArgs], scanId, QUICK_TIMEOUT),
-          this.scriptRunner.runScript('chk_41_info_disclosure.py', ['--target', assetValue, ...scanAuthArgs], scanId, QUICK_TIMEOUT),
+          this.scriptRunner.runScript(
+            'chk_01_sql.py',
+            ['--target', assetValue, ...scanAuthArgs],
+            scanId,
+            45000,
+          ),
+          this.scriptRunner.runScript(
+            'chk_02_xss.py',
+            ['--target', assetValue, ...scanAuthArgs],
+            scanId,
+            45000,
+          ),
+          this.scriptRunner.runScript(
+            'chk_03_csrf.py',
+            ['--target', assetValue, ...scanAuthArgs],
+            scanId,
+            QUICK_TIMEOUT,
+          ),
+          this.scriptRunner.runScript(
+            'chk_41_info_disclosure.py',
+            ['--target', assetValue, ...scanAuthArgs],
+            scanId,
+            QUICK_TIMEOUT,
+          ),
         ]);
-        allScriptResults.push(...this.extractSettledResults(phase2Results, scanId));
+        allScriptResults.push(
+          ...this.extractSettledResults(phase2Results, scanId),
+        );
       }
-      this.emitProgress(scanId, 70, `Vulnerability testing done — ${allScriptResults.flat().length} issues found`);
+      this.emitProgress(
+        scanId,
+        70,
+        `Vulnerability testing done — ${allScriptResults.flat().length} issues found`,
+      );
 
       // ── Phase 3: Quick security checks (70→90%) ──
       if (isWebAsset) {
-        this.emitProgress(scanId, 72, 'Running WAF detection & rate limit checks');
+        this.emitProgress(
+          scanId,
+          72,
+          'Running WAF detection & rate limit checks',
+        );
 
         const phase3Results = await Promise.allSettled([
-          this.scriptRunner.runScript('chk_40_waf_detect.py', ['--target', assetValue, ...scanAuthArgs], scanId, QUICK_TIMEOUT),
-          this.scriptRunner.runScript('chk_28_rate_limit.py', ['--target', assetValue, ...scanAuthArgs], scanId, QUICK_TIMEOUT),
+          this.scriptRunner.runScript(
+            'chk_40_waf_detect.py',
+            ['--target', assetValue, ...scanAuthArgs],
+            scanId,
+            QUICK_TIMEOUT,
+          ),
+          this.scriptRunner.runScript(
+            'chk_28_rate_limit.py',
+            ['--target', assetValue, ...scanAuthArgs],
+            scanId,
+            QUICK_TIMEOUT,
+          ),
         ]);
-        allScriptResults.push(...this.extractSettledResults(phase3Results, scanId));
+        allScriptResults.push(
+          ...this.extractSettledResults(phase3Results, scanId),
+        );
       }
 
       if (assetType === AssetType.DOMAIN) {
         const dnsResults = await Promise.allSettled([
-          this.scriptRunner.runScript('chk_10_dns.py', ['--target', assetValue, ...scanAuthArgs], scanId, QUICK_TIMEOUT),
+          this.scriptRunner.runScript(
+            'chk_10_dns.py',
+            ['--target', assetValue, ...scanAuthArgs],
+            scanId,
+            QUICK_TIMEOUT,
+          ),
         ]);
-        allScriptResults.push(...this.extractSettledResults(dnsResults, scanId));
+        allScriptResults.push(
+          ...this.extractSettledResults(dnsResults, scanId),
+        );
       }
 
-      this.emitProgress(scanId, 90, `Aggregating ${allScriptResults.flat().length} raw findings`);
+      this.emitProgress(
+        scanId,
+        90,
+        `Aggregating ${allScriptResults.flat().length} raw findings`,
+      );
 
       // ── Phase 4: Save results (90→100%) ──
       const aggregated = this.aggregator.aggregate(allScriptResults);
       await this.saveFindings(scanId, aggregated);
 
       await this.updateScanStatus(scanId, ScanStatus.COMPLETED);
-      this.emitProgress(scanId, 100, `Quick scan completed — ${aggregated.length} vulnerabilities found`);
+      this.emitProgress(
+        scanId,
+        100,
+        `Quick scan completed — ${aggregated.length} vulnerabilities found`,
+      );
 
       this.eventEmitter.emit('scan.completed', {
         scanId,
@@ -163,9 +277,13 @@ export class ScanOrchestratorService {
         findingsCount: aggregated.length,
       });
 
-      this.logger.log(`Quick scan ${scanId} completed with ${aggregated.length} findings`);
+      this.logger.log(
+        `Quick scan ${scanId} completed with ${aggregated.length} findings`,
+      );
     } catch (error) {
-      this.logger.error(`Quick scan ${scanId} failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      this.logger.error(
+        `Quick scan ${scanId} failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
+      );
       await this.updateScanStatus(scanId, ScanStatus.FAILED);
       this.emitProgress(scanId, -1, 'Scan failed');
       throw error;
@@ -188,7 +306,11 @@ export class ScanOrchestratorService {
       // ---------------------------------------------------------------
       // Phase 0: Authentication Discovery
       // ---------------------------------------------------------------
-      this.emitProgress(scanId, 1, 'Phase 0: Discovering authentication & attempting login bypass');
+      this.emitProgress(
+        scanId,
+        1,
+        'Phase 0: Discovering authentication & attempting login bypass',
+      );
 
       const deepAuthResults = await Promise.allSettled([
         this.scriptRunner.runScript(
@@ -199,19 +321,38 @@ export class ScanOrchestratorService {
         ),
       ]);
 
-      const deepAuthExtracted = this.extractSettledResults(deepAuthResults, scanId);
+      const deepAuthExtracted = this.extractSettledResults(
+        deepAuthResults,
+        scanId,
+      );
       const deepAuthFindings = deepAuthExtracted.flat();
-      const deepAuthSession = deepAuthFindings.find(f => f.vulnerability === '__AUTH_SESSION__');
-      const deepCookies = deepAuthSession?.raw_details?.cookies as string | undefined;
+      const deepAuthSession = deepAuthFindings.find(
+        (f) => f.vulnerability === '__AUTH_SESSION__',
+      );
+      const deepCookies = deepAuthSession?.raw_details?.cookies as
+        | string
+        | undefined;
 
       let scanAuthArgs = [...authArgs];
       if (deepCookies && !jobData.cookies) {
-        scanAuthArgs = ['--cookies', deepCookies, ...authArgs.filter(a => a !== '--cookies')];
-        this.logger.log(`Auth discovery acquired cookies for deep scan ${scanId}`);
-        this.emitProgress(scanId, 2, 'Authentication bypass successful — scanning with authenticated session');
+        scanAuthArgs = [
+          '--cookies',
+          deepCookies,
+          ...authArgs.filter((a) => a !== '--cookies'),
+        ];
+        this.logger.log(
+          `Auth discovery acquired cookies for deep scan ${scanId}`,
+        );
+        this.emitProgress(
+          scanId,
+          2,
+          'Authentication bypass successful — scanning with authenticated session',
+        );
       }
 
-      const realDeepAuthFindings = deepAuthFindings.filter(f => f.vulnerability !== '__AUTH_SESSION__');
+      const realDeepAuthFindings = deepAuthFindings.filter(
+        (f) => f.vulnerability !== '__AUTH_SESSION__',
+      );
       if (realDeepAuthFindings.length > 0) {
         allScriptResults.push(realDeepAuthFindings);
       }
@@ -219,13 +360,23 @@ export class ScanOrchestratorService {
       // ---------------------------------------------------------------
       // Phase 1: Network Discovery (3% → 12%)
       // ---------------------------------------------------------------
-      this.emitProgress(scanId, 3, 'Phase 1: Port scanning & network discovery');
+      this.emitProgress(
+        scanId,
+        3,
+        'Phase 1: Port scanning & network discovery',
+      );
 
       // Use common ports instead of --full (65535 ports is too slow)
       const phase1Results = await Promise.allSettled([
         this.scriptRunner.runScript(
           'chk_17_nmap.py',
-          ['--target', assetValue, '--ports', '1-1024,3306,5432,6379,8080,8443,9200,27017', ...scanAuthArgs],
+          [
+            '--target',
+            assetValue,
+            '--ports',
+            '1-1024,3306,5432,6379,8080,8443,9200,27017',
+            ...scanAuthArgs,
+          ],
           scanId,
           120000,
         ),
@@ -233,7 +384,11 @@ export class ScanOrchestratorService {
       const phase1Extracted = this.extractSettledResults(phase1Results, scanId);
       allScriptResults.push(...phase1Extracted);
 
-      this.emitProgress(scanId, 8, 'Port scan complete, fingerprinting services');
+      this.emitProgress(
+        scanId,
+        8,
+        'Port scan complete, fingerprinting services',
+      );
 
       // Extract open ports for fingerprinting
       const nmapFindings = phase1Extracted.flat();
@@ -249,10 +404,16 @@ export class ScanOrchestratorService {
           120000,
         ),
       ]);
-      allScriptResults.push(...this.extractSettledResults(fingerprintPhase, scanId));
+      allScriptResults.push(
+        ...this.extractSettledResults(fingerprintPhase, scanId),
+      );
 
       const phase1Count = allScriptResults.flat().length;
-      this.emitProgress(scanId, 12, `Phase 1 complete — ${phase1Count} issues found so far`);
+      this.emitProgress(
+        scanId,
+        12,
+        `Phase 1 complete — ${phase1Count} issues found so far`,
+      );
 
       // ---------------------------------------------------------------
       // Phase 1.5: DNS Reconnaissance (12% → 25%)
@@ -285,7 +446,11 @@ export class ScanOrchestratorService {
       }
 
       const dnsPhaseCount = allScriptResults.flat().length;
-      this.emitProgress(scanId, 25, `DNS reconnaissance complete — ${dnsPhaseCount} issues found so far`);
+      this.emitProgress(
+        scanId,
+        25,
+        `DNS reconnaissance complete — ${dnsPhaseCount} issues found so far`,
+      );
 
       // ---------------------------------------------------------------
       // Phase 2a: Injection & Input Validation (25% → 45%)
@@ -330,11 +495,17 @@ export class ScanOrchestratorService {
           ),
         ]);
 
-        allScriptResults.push(...this.extractSettledResults(injectionResults, scanId));
+        allScriptResults.push(
+          ...this.extractSettledResults(injectionResults, scanId),
+        );
       }
 
       const injectionPhaseCount = allScriptResults.flat().length;
-      this.emitProgress(scanId, 45, `Injection testing complete — ${injectionPhaseCount} issues found so far`);
+      this.emitProgress(
+        scanId,
+        45,
+        `Injection testing complete — ${injectionPhaseCount} issues found so far`,
+      );
 
       // ---------------------------------------------------------------
       // Phase 2b: Access Control & Logic (45% → 60%)
@@ -379,11 +550,17 @@ export class ScanOrchestratorService {
           ),
         ]);
 
-        allScriptResults.push(...this.extractSettledResults(accessResults, scanId));
+        allScriptResults.push(
+          ...this.extractSettledResults(accessResults, scanId),
+        );
       }
 
       const accessPhaseCount = allScriptResults.flat().length;
-      this.emitProgress(scanId, 60, `Access control testing complete — ${accessPhaseCount} issues found so far`);
+      this.emitProgress(
+        scanId,
+        60,
+        `Access control testing complete — ${accessPhaseCount} issues found so far`,
+      );
 
       // ---------------------------------------------------------------
       // Phase 2c: Protocol & Header attacks (60% → 70%)
@@ -554,11 +731,17 @@ export class ScanOrchestratorService {
           ),
         ]);
 
-        allScriptResults.push(...this.extractSettledResults(phase2cResults, scanId));
+        allScriptResults.push(
+          ...this.extractSettledResults(phase2cResults, scanId),
+        );
       }
 
       const phase2Count = allScriptResults.flat().length;
-      this.emitProgress(scanId, 70, `Phase 2 complete — ${phase2Count} issues found so far`);
+      this.emitProgress(
+        scanId,
+        70,
+        `Phase 2 complete — ${phase2Count} issues found so far`,
+      );
 
       // ---------------------------------------------------------------
       // Phase 3: Configuration & Data Exposure (70% → 90%)
@@ -602,14 +785,15 @@ export class ScanOrchestratorService {
       }
 
       const phase3Results = await Promise.allSettled(phase3Scripts);
-      const phase3Extracted = this.extractSettledResults(
-        phase3Results,
-        scanId,
-      );
+      const phase3Extracted = this.extractSettledResults(phase3Results, scanId);
       allScriptResults.push(...phase3Extracted);
 
       const totalRawDeep = allScriptResults.flat().length;
-      this.emitProgress(scanId, 90, `Phase 3 complete — ${totalRawDeep} issues found so far`);
+      this.emitProgress(
+        scanId,
+        90,
+        `Phase 3 complete — ${totalRawDeep} issues found so far`,
+      );
 
       // ---------------------------------------------------------------
       // Phase 4: Aggregation & Save (90% → 100%)
@@ -735,24 +919,18 @@ export class ScanOrchestratorService {
         'A login form or authentication endpoint was detected on the target. Authentication endpoints are common targets for brute force, credential stuffing, and bypass attacks.',
       INJECTION:
         'An injection vulnerability was detected. Injection flaws allow attackers to send malicious data to an interpreter, potentially executing unintended commands or accessing data without authorization.',
-      XSS:
-        'A Cross-Site Scripting (XSS) vulnerability was detected. XSS allows attackers to inject client-side scripts into web pages viewed by other users.',
-      CSRF:
-        'A Cross-Site Request Forgery (CSRF) vulnerability was detected. CSRF tricks authenticated users into unknowingly submitting malicious requests.',
+      XSS: 'A Cross-Site Scripting (XSS) vulnerability was detected. XSS allows attackers to inject client-side scripts into web pages viewed by other users.',
+      CSRF: 'A Cross-Site Request Forgery (CSRF) vulnerability was detected. CSRF tricks authenticated users into unknowingly submitting malicious requests.',
       OPEN_REDIRECT:
         'An open redirect vulnerability was detected. Attackers can exploit this to redirect users to malicious sites, facilitating phishing attacks.',
-      LFI:
-        'A Local File Inclusion (LFI) vulnerability was detected. This may allow attackers to read sensitive files from the server.',
+      LFI: 'A Local File Inclusion (LFI) vulnerability was detected. This may allow attackers to read sensitive files from the server.',
       MISCONFIGURATION:
         'A security misconfiguration was detected. Misconfigurations are the most common security issue and can expose sensitive data or allow unauthorized access.',
-      CORS:
-        'A Cross-Origin Resource Sharing (CORS) misconfiguration was detected. Improper CORS settings can allow unauthorized cross-origin requests.',
+      CORS: 'A Cross-Origin Resource Sharing (CORS) misconfiguration was detected. Improper CORS settings can allow unauthorized cross-origin requests.',
       COOKIE_SECURITY:
         'Insecure cookie attributes were detected. Cookies without proper security flags are vulnerable to theft via XSS or interception.',
-      DNS:
-        'A DNS security issue was detected. DNS misconfigurations can facilitate domain hijacking, email spoofing, or zone transfer attacks.',
-      SSRF:
-        'A Server-Side Request Forgery (SSRF) vulnerability was detected. SSRF allows attackers to induce the server to make requests to unintended locations.',
+      DNS: 'A DNS security issue was detected. DNS misconfigurations can facilitate domain hijacking, email spoofing, or zone transfer attacks.',
+      SSRF: 'A Server-Side Request Forgery (SSRF) vulnerability was detected. SSRF allows attackers to induce the server to make requests to unintended locations.',
       ACCESS_CONTROL:
         'An access control weakness was detected. Improper access controls can allow attackers to access resources or perform actions beyond their authorization.',
       SSL_TLS:
@@ -773,10 +951,7 @@ export class ScanOrchestratorService {
     );
   }
 
-  private getDefaultRemediation(
-    category: string,
-    severity: string,
-  ): string {
+  private getDefaultRemediation(category: string, severity: string): string {
     const remediations: Record<string, string> = {
       NETWORK:
         'Review exposed ports and close unnecessary ones. Use firewall rules to restrict access.',
@@ -786,28 +961,22 @@ export class ScanOrchestratorService {
         'Remove or restrict access to sensitive files and directories. Ensure error pages do not reveal stack traces or internal paths.',
       INJECTION:
         'Use parameterized queries and input validation to prevent injection attacks. Never construct queries or commands from raw user input.',
-      XSS:
-        'Implement output encoding and Content-Security-Policy headers. Sanitize all user-controlled data before rendering in HTML.',
+      XSS: 'Implement output encoding and Content-Security-Policy headers. Sanitize all user-controlled data before rendering in HTML.',
       SSL_TLS:
         'Update SSL/TLS configuration. Use TLS 1.2+ and strong cipher suites.',
       SERVICE_VERSION:
         'Update the affected service to the latest stable version.',
-      CSRF:
-        'Implement anti-CSRF tokens in all state-changing forms. Use the SameSite cookie attribute set to Lax or Strict.',
+      CSRF: 'Implement anti-CSRF tokens in all state-changing forms. Use the SameSite cookie attribute set to Lax or Strict.',
       OPEN_REDIRECT:
         'Validate and whitelist redirect URLs. Never use user input directly in redirect targets. Use relative paths where possible.',
-      LFI:
-        'Sanitize file path inputs. Use allowlists for permitted files. Disable directory traversal in web server configuration.',
+      LFI: 'Sanitize file path inputs. Use allowlists for permitted files. Disable directory traversal in web server configuration.',
       MISCONFIGURATION:
         'Remove default credentials. Disable debug mode in production. Restrict access to admin panels and management interfaces.',
-      CORS:
-        'Configure CORS to allow only trusted origins. Never reflect arbitrary Origin headers. Avoid Access-Control-Allow-Origin: *.',
+      CORS: 'Configure CORS to allow only trusted origins. Never reflect arbitrary Origin headers. Avoid Access-Control-Allow-Origin: *.',
       COOKIE_SECURITY:
         'Set Secure, HttpOnly, and SameSite attributes on all cookies. Use __Host- or __Secure- cookie prefixes where possible.',
-      DNS:
-        'Implement SPF, DKIM, and DMARC records. Disable zone transfers to unauthorized servers. Monitor subdomain registrations.',
-      SSRF:
-        'Validate and sanitize all URL inputs. Use allowlists for permitted destinations. Block requests to internal networks and cloud metadata endpoints.',
+      DNS: 'Implement SPF, DKIM, and DMARC records. Disable zone transfers to unauthorized servers. Monitor subdomain registrations.',
+      SSRF: 'Validate and sanitize all URL inputs. Use allowlists for permitted destinations. Block requests to internal networks and cloud metadata endpoints.',
       ACCESS_CONTROL:
         'Implement proper authorization checks for all resource access. Use unpredictable identifiers (UUIDs). Verify user permissions server-side for every request.',
     };
@@ -839,12 +1008,10 @@ export class ScanOrchestratorService {
     await this.scanRepo.update(scanId, update);
   }
 
-  private emitProgress(
-    scanId: string,
-    progress: number,
-    phase: string,
-  ): void {
-    this.logger.log(`[PROGRESS] scan=${scanId} progress=${progress} phase="${phase}"`);
+  private emitProgress(scanId: string, progress: number, phase: string): void {
+    this.logger.log(
+      `[PROGRESS] scan=${scanId} progress=${progress} phase="${phase}"`,
+    );
     // Write to shared in-memory store (reliable, polled by SSE controller)
     scanProgressStore.set(scanId, progress, phase);
     // Also emit event (for any listeners)
