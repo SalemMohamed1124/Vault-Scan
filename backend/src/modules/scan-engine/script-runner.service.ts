@@ -17,7 +17,8 @@ interface ScriptResult {
 @Injectable()
 export class ScriptRunnerService {
   private readonly logger = new Logger(ScriptRunnerService.name);
-  private readonly activePids = new Map<string, number>();
+  // Track all active PIDs per scan (scans run many scripts in parallel)
+  private readonly activePids = new Map<string, Set<number>>();
 
   async runScript(
     scriptName: string,
@@ -84,9 +85,9 @@ export class ScriptRunnerService {
       });
 
       proc.on('close', (code: number | null) => {
-        // Clean up PID tracking
-        if (scanId) {
-          this.activePids.delete(scanId);
+        // Remove only this specific PID from the set (other scripts may still be running)
+        if (scanId && proc.pid !== undefined) {
+          this.activePids.get(scanId)?.delete(proc.pid);
         }
 
         if (code !== 0) {
@@ -125,8 +126,8 @@ export class ScriptRunnerService {
       });
 
       proc.on('error', (err: Error) => {
-        if (scanId) {
-          this.activePids.delete(scanId);
+        if (scanId && proc.pid !== undefined) {
+          this.activePids.get(scanId)?.delete(proc.pid);
         }
         this.logger.error(`Failed to start ${scriptName}: ${err.message}`);
         reject(new Error(`Failed to start ${scriptName}: ${err.message}`));
@@ -134,27 +135,33 @@ export class ScriptRunnerService {
 
       // Store PID for cancellation support
       if (scanId && proc.pid !== undefined) {
-        this.activePids.set(scanId, proc.pid);
+        if (!this.activePids.has(scanId)) {
+          this.activePids.set(scanId, new Set());
+        }
+        this.activePids.get(scanId)!.add(proc.pid);
       }
     });
   }
 
   async killScan(scanId: string): Promise<void> {
-    const pid = this.activePids.get(scanId);
-    if (pid) {
-      try {
-        process.kill(pid, 'SIGTERM');
-        this.logger.log(`Sent SIGTERM to PID ${pid} for scan ${scanId}`);
-      } catch (error) {
-        this.logger.warn(
-          `Failed to kill PID ${pid}: ${error instanceof Error ? error.message : 'Unknown error'}`,
-        );
+    const pids = this.activePids.get(scanId);
+    if (pids && pids.size > 0) {
+      for (const pid of pids) {
+        try {
+          process.kill(pid, 'SIGTERM');
+          this.logger.log(`Sent SIGTERM to PID ${pid} for scan ${scanId}`);
+        } catch (error) {
+          this.logger.warn(
+            `Failed to kill PID ${pid}: ${error instanceof Error ? error.message : 'Unknown error'}`,
+          );
+        }
       }
       this.activePids.delete(scanId);
     }
   }
 
   isRunning(scanId: string): boolean {
-    return this.activePids.has(scanId);
+    const pids = this.activePids.get(scanId);
+    return pids !== undefined && pids.size > 0;
   }
 }

@@ -228,12 +228,41 @@ export class ScansService {
       );
     }
 
+    // Kill any running Python scripts for this scan
     if (scan.status === ScanStatus.RUNNING) {
-      // Kill running scripts
       await this.scriptRunner.killScan(scanId);
     }
 
-    // Update status
+    // Remove all matching Bull jobs from the queue so the worker slot is freed.
+    // Without this, cancelled jobs remain active in the queue and block new scans.
+    try {
+      const [waiting, active, delayed] = await Promise.all([
+        this.scanQueue.getWaiting(),
+        this.scanQueue.getActive(),
+        this.scanQueue.getDelayed(),
+      ]);
+
+      const matchingJobs = [...waiting, ...active, ...delayed].filter(
+        (job) => (job.data as ScanJobData).scanId === scanId,
+      );
+
+      await Promise.all(matchingJobs.map((job) => job.remove()));
+
+      if (matchingJobs.length > 0) {
+        this.logger.log(
+          `Removed ${matchingJobs.length} Bull job(s) for cancelled scan ${scanId}`,
+        );
+      }
+    } catch (error) {
+      // Don't fail the cancellation if queue cleanup fails
+      this.logger.warn(
+        `Could not clean Bull queue for scan ${scanId}: ${
+          error instanceof Error ? error.message : 'Unknown error'
+        }`,
+      );
+    }
+
+    // Update status in DB
     await this.scanRepo.update(scanId, {
       status: ScanStatus.CANCELLED,
       completedAt: new Date(),
