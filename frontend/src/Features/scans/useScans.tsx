@@ -22,11 +22,11 @@ export function useScans(params: {
     queryKey: ["scans", params],
     queryFn: () => fetchScans(params),
     refetchInterval: (queryState) => {
-      // If any scan is still running, refetch more frequently
-      const hasRunning = queryState.state.data?.data?.some(
-        (s) => s.status === "RUNNING",
+      // Poll frequently while any scan is pending or running
+      const hasActive = queryState.state.data?.data?.some(
+        (s) => s.status === "RUNNING" || s.status === "PENDING",
       );
-      return hasRunning ? 5000 : 30000;
+      return hasActive ? 5000 : 30000;
     },
   });
 
@@ -66,7 +66,9 @@ export function useScan(id: string) {
     queryFn: () => fetchScan(id),
     enabled: !!id,
     refetchInterval: (queryState) => {
-      return queryState?.state?.data?.status === "RUNNING" ? 3000 : false;
+      const status = queryState?.state?.data?.status;
+      // Poll while the scan is pending (queued) or actively running
+      return status === "RUNNING" || status === "PENDING" ? 3000 : false;
     },
   });
 
